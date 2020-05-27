@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/task_list_fragment">
+    app:startDestination="@+id/fragment_welcome">
+
+    <fragment
+        android:id="@+id/fragment_welcome"
+        android:name="com.bringg.android.example.driversdk.ui.WelcomeFragment"
+        android:label="@string/login">
+        <action
+            android:id="@+id/action_on_logged_in"
+            app:destination="@id/task_list_fragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.bringg.android.example.driversdk.ui.login.LoginFragment"
+        android:label="@string/login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_on_logged_in"
+            app:destination="@id/task_list_fragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
+    </fragment>
     <fragment
         android:id="@+id/task_list_fragment"
         android:name="com.bringg.android.example.driversdk.ui.taskList.TaskListFragment"
-        android:label="@string/task_list">
+        android:label="@string/task_list"
+        tools:layout="@layout/task_list_fragment">
         <action
             android:id="@+id/action_task_list_to_task_fragment"
             app:destination="@id/task_fragment"
@@ -16,7 +41,8 @@
     <fragment
         android:id="@+id/task_fragment"
         android:name="com.bringg.android.example.driversdk.ui.task.TaskFragment"
-        android:label="@string/order_description">
+        android:label="@string/order_description"
+        tools:layout="@layout/task_fragment">
         <action
             android:id="@+id/action_task_fragment_to_inventory_fragment"
             app:destination="@id/inventory_fragment"
@@ -26,5 +52,6 @@
     <fragment
         android:id="@+id/inventory_fragment"
         android:name="com.bringg.android.example.driversdk.ui.inventory.InventoryListFragment"
-        android:label="@string/order_inventory"/>
+        android:label="@string/order_inventory"
+        tools:layout="@layout/fragment_inventory_list" />
 </navigation>

@@ -99,6 +99,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="task_list">Orders</string>
+    <string name="login">Login</string>
 
 
 </resources>
