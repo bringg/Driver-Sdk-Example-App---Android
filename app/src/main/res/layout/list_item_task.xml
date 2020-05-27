@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    android:background="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <include
+            layout="@layout/task_status_indication_on_list"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/task_list_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="3dp"
+            android:clipToPadding="false">
+
+            <TextView
+                android:id="@+id/task_external_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/details_layout"
+                android:textColor="@color/task_list_description_grey"
+                android:textSize="12sp"
+
+                tools:text="#LSOOSO" />
+
+            <TextView
+                android:id="@+id/task_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/task_external_id"
+                android:layout_marginTop="3dp"
+                android:layout_toStartOf="@+id/details_layout"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="normal"
+
+                tools:text="1439 45th Ave Cir W Bradenton, FL 34207 USA, Test Borough" />
+
+            <LinearLayout
+                android:id="@+id/task_address_second_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_address"
+                android:layout_alignStart="@+id/task_address"
+                android:layout_alignEnd="@id/task_address"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/task_address_second_line"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    tools:text="Task address second line" />
+
+                <TextView
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/customer_address_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/task_list_item_customer_address_type_bg"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    tools:text="Residential" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/customer_address_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_address_second_layout"
+                android:layout_alignStart="@+id/task_address"
+                android:layout_alignLeft="@+id/task_address"
+                android:layout_alignEnd="@id/task_address"
+                android:layout_alignRight="@id/task_address"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="6dp"
+                android:textSize="12sp"
+                android:textStyle="normal"
+
+                tools:text="Customer address name" />
+
+            <TextView
+                android:id="@+id/task_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/customer_address_name"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="2dp"
+                android:lineSpacingExtra="3dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+
+                tools:text="Task description" />
+
+            <TextView
+                android:id="@+id/task_customer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/task_description"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                tools:text="Michael" />
+
+            <LinearLayout
+                android:id="@+id/details_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/task_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/list_item_red"
+                        android:textSize="14sp"
+                        tools:text="Jan 04, 15:00" />
+
+                    <TextView
+                        android:id="@+id/task_late_indication"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="!"
+                        android:textColor="@color/list_item_red"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/time_window"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/mid_light_grey_transparent"
+                    android:textSize="12sp"
+
+                    tools:text="12:00 - 18:00" />
+
+                <TextView
+                    android:id="@+id/task_special_status_label"
+                    style="@style/TextAppearance.Label"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/task_list_item_grab_bg"
+                    tools:text="Grab" />
+
+                <TextView
+                    android:id="@+id/task_special_status_second_label"
+                    style="@style/TextAppearance.Label"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/task_list_item_pickup_bg"
+                    tools:text="@string/inventory_collect_label" />
+
+                <TextView
+                    android:id="@+id/task_special_status_third_label"
+                    style="@style/TextAppearance.Label"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/task_list_item_dropoff_bg"
+                    android:visibility="gone"
+                    tools:text="@string/unaccepted_task"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/task_service_plan_label"
+                    style="@style/TextAppearance.Label"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/task_list_item_service_plan_bg"
+                    android:visibility="gone"
+                    tools:text="Premium"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
