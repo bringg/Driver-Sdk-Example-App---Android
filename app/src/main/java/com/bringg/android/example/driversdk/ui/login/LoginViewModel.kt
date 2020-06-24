@@ -13,7 +13,7 @@ import driver_sdk.driver.model.result.DriverLoginResult
 import driver_sdk.driver.model.result.PhoneVerificationRequestResult
 import driver_sdk.driver.model.result.ResetPasswordRequestResult
 
-class LoginViewModel() : ViewModel() {
+class LoginViewModel : ViewModel() {
 
     private val TAG = "LoginViewModel"
 

@@ -14,13 +14,13 @@ class WelcomeFragment : Fragment() {
         DriverSdkProvider.init(context.applicationContext, ExampleNotificationProvider(context))
 
         val driverSdk = DriverSdkProvider.driverSdk()
-        driverSdk.data.login.observeForever { isLoggedIn ->
-            val navController = findNavController()
-            if (isLoggedIn) {
-                navController.navigate(R.id.task_list_fragment)
-            } else {
-                navController.navigate(R.id.login_fragment)
-            }
+        val navController = findNavController()
+
+        val isLoggedIn = driverSdk.data.login.value
+        if (isLoggedIn!!) {
+            navController.navigate(R.id.task_list_fragment)
+        } else {
+            navController.navigate(R.id.login_fragment)
         }
     }
 }

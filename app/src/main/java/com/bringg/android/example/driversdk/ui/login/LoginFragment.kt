@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
+import driver_sdk.account.LoginMerchant
 import driver_sdk.driver.model.result.DriverLoginResult
 
 class LoginFragment : Fragment() {
@@ -94,6 +95,19 @@ class LoginFragment : Fragment() {
             false
         }
 
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<LoginMerchant?>("merchant")?.observe(
+            viewLifecycleOwner,
+            Observer { merchant ->
+                if (merchant != null) {
+                    loginViewModel.loginWithEmail(
+                        usernameEditText.text.toString(),
+                        passwordEditText.text.toString(),
+                        merchant
+                    )
+                }
+            }
+        )
+
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
             loginWithEmail(usernameEditText, passwordEditText)
@@ -111,6 +125,7 @@ class LoginFragment : Fragment() {
         val welcome = getString(R.string.welcome)
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        findNavController().navigate(R.id.task_list_fragment)
     }
 
     private fun showLoginFailed(result: DriverLoginResult) {

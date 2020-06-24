@@ -101,6 +101,7 @@
     <string name="task_list">Orders</string>
     <string name="login">Login</string>
     <string name="login_merchant_selection">Select Company</string>
+    <string name="login_merchant_selection_title">Please choose your current employer</string>
 
 
 </resources>
