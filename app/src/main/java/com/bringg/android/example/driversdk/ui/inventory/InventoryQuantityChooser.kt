@@ -2,10 +2,14 @@ package com.bringg.android.example.driversdk.ui.inventory
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import com.bringg.android.example.driversdk.R
+import driver_sdk.DriverSdkProvider
+import driver_sdk.content.ResultCallback
+import driver_sdk.content.inventory.InventoryQtyChangeResult
 import driver_sdk.models.Inventory
 import kotlinx.android.synthetic.main.inventory_quantity_chooser.view.*
 
@@ -28,11 +32,20 @@ class InventoryQuantityChooser @JvmOverloads constructor(
 
         btnAcceptAllChecked.setOnClickListener {
             checkAcceptAll()
-//            DriverSdkProvider.driverSdk().inventory.acceptAll(inventory.id)
+            DriverSdkProvider.driverSdk().inventory.accept(inventory.id, inventory.originalQuantity, object : ResultCallback<InventoryQtyChangeResult> {
+                override fun onResult(result: InventoryQtyChangeResult) {
+                    result.inventory
+                    Log.i(TAG, "accept all result for itemId${inventory.id} = $result")
+                }
+            })
         }
         btnRejectAllChecked.setOnClickListener {
             checkRejectAll()
-//            DriverSdkProvider.driverSdk().inventory.rejectAll(inventory.id)
+            DriverSdkProvider.driverSdk().inventory.accept(inventory.id, 0, object : ResultCallback<InventoryQtyChangeResult> {
+                override fun onResult(result: InventoryQtyChangeResult) {
+                    Log.i(TAG, "reject all result for itemId${inventory.id} = $result")
+                }
+            })
         }
         btnPartialChecked.setOnClickListener {
             checkPartial()
@@ -42,7 +55,15 @@ class InventoryQuantityChooser @JvmOverloads constructor(
                 return@setOnClickListener
             }
             txt_partial.error = null
-//            DriverSdkProvider.driverSdk().inventory.accept(inventory.id, qty)
+            DriverSdkProvider.driverSdk().inventory.accept(inventory.id, qty, object : ResultCallback<InventoryQtyChangeResult> {
+                override fun onResult(result: InventoryQtyChangeResult) {
+                    if (result.success()) {
+                        Log.i(TAG, "accept $qty/${inventory.originalQuantity} units result for itemId${inventory.id}")
+                    } else {
+                        Log.i(TAG, "can't accept quantity, error=${result.error}")
+                    }
+                }
+            })
         }
     }
 

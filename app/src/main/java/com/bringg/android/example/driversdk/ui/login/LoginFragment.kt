@@ -14,8 +14,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
-import driver_sdk.models.enums.LoginResult
+import driver_sdk.driver.model.result.DriverLoginResult
 
 class LoginFragment : Fragment() {
 
@@ -57,8 +58,12 @@ class LoginFragment : Fragment() {
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 loadingProgressBar.visibility = View.GONE
-                if (loginResult.result == LoginResult.SUCCESS) {
+                if (loginResult.success) {
                     showLoginSuccess()
+                } else if (loginResult.userMerchantList.isNotEmpty()) {
+                    val args = Bundle()
+                    args.putParcelableArray("merchants", loginResult.userMerchantList.toTypedArray())
+                    findNavController().navigate(R.id.login_merchant_selection, args)
                 } else {
                     showLoginFailed(loginResult)
                 }
@@ -84,21 +89,22 @@ class LoginFragment : Fragment() {
         passwordEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
-                )
+                loginWithEmail(usernameEditText, passwordEditText)
             }
             false
         }
 
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
-            loginViewModel.login(
-                usernameEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
+            loginWithEmail(usernameEditText, passwordEditText)
         }
+    }
+
+    private fun loginWithEmail(usernameEditText: EditText, passwordEditText: EditText) {
+        loginViewModel.loginWithEmail(
+            usernameEditText.text.toString(),
+            passwordEditText.text.toString()
+        )
     }
 
     private fun showLoginSuccess() {
@@ -107,8 +113,8 @@ class LoginFragment : Fragment() {
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
     }
 
-    private fun showLoginFailed(result: com.bringg.android.example.driversdk.ui.login.LoginResult) {
+    private fun showLoginFailed(result: DriverLoginResult) {
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, result.toString(), Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, result.error!!.name(), Toast.LENGTH_LONG).show()
     }
 }

@@ -25,7 +25,7 @@ class TaskListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = TaskListAdapter(this, DriverSdkProvider.driverSdk().data.tasks(), object : TaskViewHolder.ClickListener {
+        val adapter = TaskListAdapter(this, DriverSdkProvider.driverSdk().data.taskList, object : TaskViewHolder.ClickListener {
             override fun onTaskItemClick(task: Task) {
                 val args = bundleOf("task_id" to task.getId())
                 findNavController().navigate(R.id.action_task_list_to_task_fragment, args)

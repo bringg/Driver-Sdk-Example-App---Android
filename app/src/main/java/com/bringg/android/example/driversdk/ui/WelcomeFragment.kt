@@ -10,8 +10,11 @@ import driver_sdk.DriverSdkProvider
 class WelcomeFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         DriverSdkProvider.init(context.applicationContext, ExampleNotificationProvider(context))
-        DriverSdkProvider.driverSdk().data.login().observeForever { isLoggedIn ->
+
+        val driverSdk = DriverSdkProvider.driverSdk()
+        driverSdk.data.login.observeForever { isLoggedIn ->
             val navController = findNavController()
             if (isLoggedIn) {
                 navController.navigate(R.id.task_list_fragment)
