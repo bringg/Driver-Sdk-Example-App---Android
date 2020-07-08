@@ -11,7 +11,11 @@ import com.bringg.android.example.driversdk.ui.task.ui.view.InventoryListPresent
 import com.bringg.android.example.driversdk.ui.task.ui.view.WaypointView
 import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
-import driver_sdk.driver.model.result.*
+import driver_sdk.driver.model.result.ShiftStartResult
+import driver_sdk.driver.model.result.TaskAcceptResult
+import driver_sdk.driver.model.result.TaskStartResult
+import driver_sdk.driver.model.result.WaypointArriveResult
+import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.Inventory
 import driver_sdk.models.Waypoint
 
@@ -88,14 +92,14 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
 
         if (!driverSdk.isOnShift()) {
             btnNextAction.isEnabled = true
-            btnNextAction.text = "Be Online"
+            btnNextAction.text = btnNextAction.resources.getString(R.string.start_shift)
             btnNextAction.setOnClickListener {
                 driverSdk.shift.startShift(object : ResultCallback<ShiftStartResult> {
                     override fun onResult(result: ShiftStartResult) {
                         if (result.success) {
-                            Log.i(TAG,"user is online, DriverSdk is working in the background, DriverSdkProvider.driverSdk.data.online will post TRUE")
+                            Log.i(TAG, "user is online, DriverSdk is working in the background, DriverSdkProvider.driverSdk.data.online will post TRUE")
                         } else {
-                            Log.i(TAG,"start shift request failed, error=${result.error}")
+                            Log.i(TAG, "start shift request failed, error=${result.error}")
                         }
                     }
                 })
