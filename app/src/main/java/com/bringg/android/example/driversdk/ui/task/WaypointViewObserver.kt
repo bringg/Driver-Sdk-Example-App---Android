@@ -11,13 +11,13 @@ import com.bringg.android.example.driversdk.ui.task.ui.view.InventoryListPresent
 import com.bringg.android.example.driversdk.ui.task.ui.view.WaypointView
 import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
-import driver_sdk.driver.model.result.AcceptTaskResult
-import driver_sdk.driver.model.result.StartShiftResult
+import driver_sdk.driver.model.result.ShiftStartResult
+import driver_sdk.driver.model.result.TaskAcceptResult
+import driver_sdk.driver.model.result.TaskStartResult
+import driver_sdk.driver.model.result.WaypointArriveResult
+import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.Inventory
 import driver_sdk.models.Waypoint
-import driver_sdk.tasks.ArriveWaypointResult
-import driver_sdk.tasks.LeaveWaypointResult
-import driver_sdk.tasks.start.StartTaskResult
 
 class WaypointViewObserver(private val waypointId: Long, view: View, private val navController: NavController) : Observer<Waypoint?>, InventoryListPresenter {
 
@@ -39,9 +39,13 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                 btnNextAction.isEnabled = true
                 btnNextAction.text = "Accept Order"
                 btnNextAction.setOnClickListener {
-                    driverSdk.task.acceptTask(task.getId(), object : ResultCallback<AcceptTaskResult> {
-                        override fun onResult(result: AcceptTaskResult) {
-                            Log.i(TAG, "arrive waypoint result=$result")
+                    driverSdk.task.acceptTask(task.getId(), object : ResultCallback<TaskAcceptResult> {
+                        override fun onResult(result: TaskAcceptResult) {
+                            if (result.success) {
+                                Log.i(TAG, "task was successfully accepted, LiveData event will be posted, result=$result")
+                            } else {
+                                Log.i(TAG, "accepting the task failed, error=${result.error}")
+                            }
                         }
                     })
                 }
@@ -54,8 +58,8 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                 if (waypoint.isCheckedIn) {
                     btnNextAction.text = "Order Collected"
                     btnNextAction.setOnClickListener {
-                        driverSdk.task.leaveWayPoint(waypoint.id, object : ResultCallback<LeaveWaypointResult> {
-                            override fun onResult(result: LeaveWaypointResult) {
+                        driverSdk.task.leaveWayPoint(waypoint.id, object : ResultCallback<WaypointLeaveResult> {
+                            override fun onResult(result: WaypointLeaveResult) {
                                 Log.i(TAG, "leave waypoint result=$result")
                             }
                         })
@@ -63,8 +67,8 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                 } else if (waypoint.isStarted) {
                     btnNextAction.text = "Arrived"
                     btnNextAction.setOnClickListener {
-                        driverSdk.task.arriveToWayPoint(waypoint.id, object : ResultCallback<ArriveWaypointResult> {
-                            override fun onResult(result: ArriveWaypointResult) {
+                        driverSdk.task.arriveToWayPoint(waypoint.id, object : ResultCallback<WaypointArriveResult> {
+                            override fun onResult(result: WaypointArriveResult) {
                                 Log.i(TAG, "arrive waypoint result=$result")
                             }
                         })
@@ -72,9 +76,13 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                 } else {
                     btnNextAction.text = "Start"
                     btnNextAction.setOnClickListener {
-                        driverSdk.task.startTask(task.getId(), object : ResultCallback<StartTaskResult> {
-                            override fun onResult(result: StartTaskResult) {
-                                Log.i(TAG, "start task result=$result")
+                        driverSdk.task.startTask(task.getId(), object : ResultCallback<TaskStartResult> {
+                            override fun onResult(result: TaskStartResult) {
+                                if (result.success) {
+                                    Log.i(TAG, "task was successfully started, LiveData event will be posted, result=$result")
+                                } else {
+                                    Log.i(TAG, "starting the task failed, error=${result.error}")
+                                }
                             }
                         })
                     }
@@ -84,11 +92,15 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
 
         if (!driverSdk.isOnShift()) {
             btnNextAction.isEnabled = true
-            btnNextAction.text = "Be Online"
+            btnNextAction.text = btnNextAction.resources.getString(R.string.start_shift)
             btnNextAction.setOnClickListener {
-                driverSdk.shift.startShift(object : ResultCallback<StartShiftResult> {
-                    override fun onResult(result: StartShiftResult) {
-                        Log.i(TAG, "start shift result=$result")
+                driverSdk.shift.startShift(object : ResultCallback<ShiftStartResult> {
+                    override fun onResult(result: ShiftStartResult) {
+                        if (result.success) {
+                            Log.i(TAG, "user is online, DriverSdk is working in the background, DriverSdkProvider.driverSdk.data.online will post TRUE")
+                        } else {
+                            Log.i(TAG, "start shift request failed, error=${result.error}")
+                        }
                     }
                 })
             }
