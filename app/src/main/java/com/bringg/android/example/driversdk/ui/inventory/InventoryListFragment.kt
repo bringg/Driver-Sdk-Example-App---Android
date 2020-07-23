@@ -69,7 +69,8 @@ class InventoryListFragment : Fragment(), InventoryItemPresenter {
 
     private fun showRootList() {
         navigationFlow.clear()
-        val inventories = ArrayList(driverSdk().data.waypoint(requireArguments().getLong("waypoint_id")).value!!.inventories)
+        val inventories = ArrayList(driverSdk().data.waypoint(requireArguments().getLong("waypoint_id")).value!!.flattenedInventoryList)
+
         inventoryAdapter.setInventoryItems(inventories)
     }
 
