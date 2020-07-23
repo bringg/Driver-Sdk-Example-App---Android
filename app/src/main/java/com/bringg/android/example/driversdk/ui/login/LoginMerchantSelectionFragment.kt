@@ -12,7 +12,7 @@ import driver_sdk.account.LoginMerchant
 import kotlinx.android.synthetic.main.fragment_login_merchant_selection.*
 import kotlinx.android.synthetic.main.list_item_merchant_selection.view.*
 
-class LoginMerchantSelectionFragment : DialogFragment() {
+class LoginMerchantSelectionFragment() : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login_merchant_selection, container, false)
