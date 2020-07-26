@@ -58,5 +58,10 @@
         android:id="@+id/login_merchant_selection"
         android:name="com.bringg.android.example.driversdk.ui.login.LoginMerchantSelectionFragment"
         android:label="@string/login_merchant_selection"
-        tools:layout="@layout/fragment_login_merchant_selection"/>
+        tools:layout="@layout/fragment_login_merchant_selection" />
+    <dialog
+        android:id="@+id/dialog_cancel_task"
+        android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
+        android:label="@string/cancel_task"
+        tools:layout="@layout/fragment_cancel_task_reason_selection" />
 </navigation>

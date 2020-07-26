@@ -1,5 +1,6 @@
 package com.bringg.android.example.driversdk.homelist
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -17,8 +18,12 @@ class HomeListAdapter(fragment: Fragment, private val homeMap: LiveData<Map<Home
 
     init {
         homeMap.observe(fragment, Observer {
+            Log.i("homes changed", "home states:")
+            it.forEach { entry ->
+                Log.i("homes changed", "homeId=${entry.key.id}, state=${entry.value}")
+            }
             homeList.clear()
-            homeList.addAll(it.filter { it.key != null && it.value != null }.toList())
+            homeList.addAll(it.toList())
             notifyDataSetChanged()
         })
     }

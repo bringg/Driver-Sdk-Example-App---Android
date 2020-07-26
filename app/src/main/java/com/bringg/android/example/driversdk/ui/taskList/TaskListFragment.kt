@@ -70,7 +70,20 @@ class TaskListFragment : Fragment() {
 
         home_state_recycler.adapter = HomeListAdapter(this, driverSdk.data.homeMap)
 
-        val adapter = TaskListAdapter(this, driverSdk.data.taskList, object : TaskViewHolder.ClickListener {
+        val taskList = driverSdk.data.taskList
+
+        task_list_swipe_to_refresh.setOnRefreshListener {
+            Log.i(TAG, "onRefresh called from SwipeRefreshLayout")
+            taskList.observe(viewLifecycleOwner, object : Observer<List<Task>> {
+                override fun onChanged(t: List<Task>?) {
+                    task_list_swipe_to_refresh.isRefreshing = false
+                    taskList.removeObserver(this)
+                }
+            })
+            DriverSdkProvider.driverSdk().data.refreshTaskList()
+        }
+
+        val adapter = TaskListAdapter(this, taskList, object : TaskViewHolder.ClickListener {
             override fun onTaskItemClick(task: Task) {
                 val args = bundleOf("task_id" to task.getId())
                 findNavController().navigate(R.id.action_task_list_to_task_fragment, args)

@@ -83,7 +83,7 @@ class LoginViewModel : ViewModel() {
                                 "Use the verification code from the SMS message to call DriverSdkProvider.driverSdk.loginWithPhone(phone, verificationCode, callback)"
                     )
                 } else {
-                    Log.i(TAG,"phone verification request failed")
+                    Log.i(TAG, "phone verification request failed")
                 }
             }
         })
@@ -99,7 +99,7 @@ class LoginViewModel : ViewModel() {
                                 "Use the password to call DriverSdkProvider.driverSdk.loginWithEmail(email, password, callback)"
                     )
                 } else {
-                    Log.i(TAG,"reset password request failed")
+                    Log.i(TAG, "reset password request failed")
                 }
             }
         })

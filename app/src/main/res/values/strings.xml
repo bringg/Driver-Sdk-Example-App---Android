@@ -104,6 +104,9 @@
     <string name="login_merchant_selection_title">Please choose your current employer</string>
     <string name="start_shift">Start Shift</string>
     <string name="end_shift">End Shift</string>
+    <string name="cancel_task">Cancel Task</string>
+    <string name="choose_cancel_reason">Choose Cancel Reason</string>
+    <string name="apply">Apply</string>
 
 
 </resources>
