@@ -64,4 +64,11 @@
         android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
         android:label="@string/cancel_task"
         tools:layout="@layout/fragment_cancel_task_reason_selection" />
+    <dialog
+        android:id="@+id/dialog_actions"
+        android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
+        android:label="@string/cancel_task"
+        tools:layout="@layout/fragment_cancel_task_reason_selection">
+        <argument android:name="actions" />
+    </dialog>
 </navigation>

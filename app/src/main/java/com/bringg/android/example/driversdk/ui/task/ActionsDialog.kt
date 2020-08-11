@@ -12,14 +12,12 @@ import com.bringg.android.example.driversdk.R
 import com.google.android.material.snackbar.Snackbar
 import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
-import driver_sdk.driver.actions.DriverActionData
-import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.models.configuration.TaskActionItem
 import driver_sdk.tasks.TaskCancelResult
 import kotlinx.android.synthetic.main.fragment_cancel_task_reason_selection.*
 import kotlinx.android.synthetic.main.list_item_cancel_reason.view.*
 
-class CancelTaskDialog : DialogFragment() {
+class ActionsDialog : DialogFragment() {
 
     private fun taskId() = requireArguments().getLong("task_id")
 
@@ -53,13 +51,14 @@ class CancelTaskDialog : DialogFragment() {
     }
 
     private fun handleMandatoryCancelTaskActions(actions: Collection<TaskActionItem>) {
-        val actionData = DriverActionData.Builder(actions.first()).taskId(taskId()).build()
-        DriverSdkProvider.driverSdk().actions.submitNote(actionData, "this is my note",
-            object : ResultCallback<NoteResult> {
-                override fun onResult(result: NoteResult) {
-                    Log.i("CancelTask", "note result=$result")
-                }
-            })
+//        showActionsDialog(actions)
+//        val actionData = DriverActionData.Builder(actionItem).taskId(taskId()).build()
+//        DriverSdkProvider.driverSdk().actions.addNote(actionData, "this is my note",
+//            object : ResultCallback<NoteResult> {
+//                override fun onResult(result: NoteResult) {
+//                    Log.i("CancelTask", "note result=$result")
+//                }
+//            })
     }
 
     class CancelReasonsAdapter(private val reasons: List<String>, private val itemClickListener: View.OnClickListener) : RecyclerView.Adapter<MerchantViewHolder>(
