@@ -35,7 +35,11 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
         } else {
             val task = driverSdk.data.task(waypoint.taskId).value
             waypointView.refresh(task, waypoint, this)
-            if (!task!!.isAccepted) {
+            if (waypoint.isDone) {
+                btnNextAction.isEnabled = true
+                btnNextAction.text = "Done"
+                btnNextAction.setOnClickListener { navController.navigateUp() }
+            } else if (!task!!.isAccepted) {
                 btnNextAction.isEnabled = true
                 btnNextAction.text = "Accept Order"
                 btnNextAction.setOnClickListener {
@@ -49,10 +53,6 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                         }
                     })
                 }
-            } else if (waypoint.isDone) {
-                btnNextAction.isEnabled = true
-                btnNextAction.text = "Done"
-                btnNextAction.setOnClickListener { navController.navigateUp() }
             } else {
                 btnNextAction.isEnabled = true
                 if (waypoint.isCheckedIn) {
