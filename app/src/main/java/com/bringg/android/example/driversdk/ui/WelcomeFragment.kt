@@ -11,13 +11,19 @@ class WelcomeFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
+        // 1. initialize the sdk:
         DriverSdkProvider.init(context.applicationContext, ExampleNotificationProvider(context))
-
+        // 2. get the sdk instance:
         val driverSdk = DriverSdkProvider.driverSdk()
-        val navController = findNavController()
+        // 3. use the sdk instance:
+        val isLoggedIn = driverSdk.isLoggedIn
 
-        val isLoggedIn = driverSdk.data.login.value
-        if (isLoggedIn!!) {
+        showNextFragment(isLoggedIn)
+    }
+
+    private fun showNextFragment(isLoggedIn: Boolean) {
+        val navController = findNavController()
+        if (isLoggedIn) {
             navController.navigate(R.id.task_list_fragment)
         } else {
             navController.navigate(R.id.login_fragment)
