@@ -4,7 +4,7 @@ The Bringg Driver SDK for Android provides a simple native Android api that lets
 
 1. Add the sdk to your project:
 dependencies {
-    implementation 'com.bringg:driver_sdk:1.3.5'
+    implementation 'com.bringg:driver_sdk:1.3.6'
 }
 
 2. Initialize the sdk instance:
