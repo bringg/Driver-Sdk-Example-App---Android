@@ -156,24 +156,37 @@ class TaskViewHolder(
     }
 
     private fun updateLabelTaskType(task: Task) {
-        if (task.getTaskTypeId() == null) {
+        if (task.taskTypeId == null) {
             typeLabel.visibility = View.GONE
             return
         }
         var labelVisibility = View.GONE
         var labelBackgroundResource = 0
         var labelStringResource = 0
-        val taskType = task.taskTypeId
-        when (taskType) {
-            Task.TASK_TYPE_ID_PICKUP, Task.TASK_TYPE_ID_PICKUP_AND_DROP_OFF -> {
+        val firstWayPoint = task.firstWayPoint
+        when (task.taskTypeId) {
+            Task.TASK_TYPE_ID_PICKUP -> {
                 labelVisibility = View.VISIBLE
                 labelStringResource = R.string.inventory_collect_label
                 labelBackgroundResource = R.drawable.task_list_item_pickup_bg
             }
+            Task.TASK_TYPE_ID_PICKUP_AND_DROP_OFF -> {
+                if (firstWayPoint != null && !firstWayPoint.isDone) {
+                    labelVisibility = View.VISIBLE
+                    labelStringResource = R.string.inventory_collect_label
+                    labelBackgroundResource = R.drawable.task_list_item_pickup_bg
+                }
+            }
             Task.TASK_TYPE_ID_DROP_OFF -> {
-                labelVisibility = View.VISIBLE
-                labelStringResource = R.string.inventory_deliver_label
-                labelBackgroundResource = R.drawable.task_list_item_dropoff_bg
+                if (task.wayPoints.size > 1 && firstWayPoint == task.currentWayPoint) {
+                    labelVisibility = View.VISIBLE
+                    labelStringResource = R.string.inventory_collect_label
+                    labelBackgroundResource = R.drawable.task_list_item_pickup_bg
+                } else {
+                    labelVisibility = View.VISIBLE
+                    labelStringResource = R.string.inventory_deliver_label
+                    labelBackgroundResource = R.drawable.task_list_item_dropoff_bg
+                }
             }
         }
         typeLabel.visibility = labelVisibility
@@ -190,9 +203,9 @@ class TaskViewHolder(
     }
 
     private fun updateLabelSecondTaskType(task: Task) {
-        val isPickupAndDropOffTask = task.getTaskTypeId() != null && task.getTaskTypeId() == Task.TASK_TYPE_ID_PICKUP_AND_DROP_OFF
+        val isPickupAndDropOffTask = task.taskTypeId != null && task.taskTypeId == Task.TASK_TYPE_ID_PICKUP_AND_DROP_OFF
         if (isPickupAndDropOffTask) {
-            typeLabelSecond.setText(R.string.inventory_collect_label)
+            typeLabelSecond.setText(R.string.inventory_deliver_label)
             typeLabelSecond.setBackgroundResource(R.drawable.task_list_item_dropoff_bg)
             typeLabelSecond.visibility = View.VISIBLE
         } else {

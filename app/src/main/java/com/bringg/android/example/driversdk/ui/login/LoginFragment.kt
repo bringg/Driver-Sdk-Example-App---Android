@@ -124,7 +124,7 @@ class LoginFragment : Fragment() {
     private fun showLoginSuccess() {
         val welcome = getString(R.string.welcome)
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, welcome, Toast.LENGTH_SHORT).show()
         findNavController().navigate(R.id.task_list_fragment)
     }
 

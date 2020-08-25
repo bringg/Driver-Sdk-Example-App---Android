@@ -11,12 +11,14 @@ import com.bringg.android.example.driversdk.util.TaskStatusMap
 import com.bumptech.glide.Glide
 import driver_sdk.models.Task
 import driver_sdk.models.Waypoint
+import driver_sdk.util.TimeUtil
 import kotlinx.android.synthetic.main.fragment_waypoint_list_header.view.*
 import kotlinx.android.synthetic.main.layout_way_point_title.view.*
 import kotlinx.android.synthetic.main.waypoint_time_window_layout.view.*
 import java.util.*
 
 class WaypointView : CardView {
+    private val pricingFormat = "%.2f"
     private var inventoryLayout: InventoryPricingLayout
     private var addressText: TextView
     private var secondLineAddress: TextView
@@ -60,7 +62,7 @@ class WaypointView : CardView {
         } else {
             scheduled_for_text.visibility = View.VISIBLE
             scheduled_for_title.visibility = View.VISIBLE
-            scheduled_for_text.text = waypoint.scheduledAt
+            scheduled_for_text.text = getLocalDateString(waypoint.scheduledAt)
         }
 
         if (waypoint.noEarlierThan.isNullOrBlank() && waypoint.noLaterThan.isNullOrBlank()) {
@@ -71,18 +73,23 @@ class WaypointView : CardView {
                 time_window_start.visibility = View.GONE
             } else {
                 time_window_start.visibility = View.VISIBLE
-                time_window_start.text = waypoint.noEarlierThan
+                time_window_start.text = getLocalDateString(waypoint.noEarlierThan)
             }
             if (waypoint.noLaterThan.isNullOrBlank()) {
                 time_window_end.visibility = View.GONE
             } else {
                 time_window_end.visibility = View.VISIBLE
-                time_window_end.text = waypoint.noLaterThan
+                time_window_end.text = getLocalDateString(waypoint.noLaterThan)
             }
         }
 
-        eta_text.text = if (waypoint.eta.isNullOrBlank()) "Start the order to calculate ETA" else waypoint.eta
+        eta_text.text = if (waypoint.eta.isNullOrBlank()) "Start the order to calculate ETA" else getLocalDateString(waypoint.eta)
+        wp_started_at_text.text = if (waypoint.startedTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.startedTime)
+        wp_checkin_at_text.text = if (waypoint.checkinTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.checkinTime)
+        wp_checkout_text.text = if (waypoint.checkoutTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.checkoutTime)
     }
+
+    private fun getLocalDateString(dateString: String) = TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(TimeUtil.getTimeFromServerDateString(dateString) - TimeUtil.getTimeZoneDifferenceInMillis())
 
     fun refresh(task: Task?, waypoint: Waypoint?, inventoryListPresenter: InventoryListPresenter) {
         if (task == null || waypoint == null) {
@@ -131,10 +138,11 @@ class WaypointView : CardView {
 
     private fun updateInventoryList(task: Task, waypoint: Waypoint, inventoryListPresenter: InventoryListPresenter) {
         inventoryLayout.setData(waypoint.flattenedInventoryList.toList(), inventoryListPresenter)
-        inventoryLayout.setDeliveryFee(task.deliveryPrice)
-        inventoryLayout.setTotal(task.totalPrice)
-        inventoryLayout.setToBePaid(task.leftToBePaid)
-        inventoryLayout.setAmountPaid(task.paidAmount, task.paymentMethod)
+        tv_delivery_fee_value.text = pricingFormat.format(task.deliveryPrice)
+        tv_total_value.text = pricingFormat.format(task.totalPrice)
+        tv_total_to_be_paid_value.text = pricingFormat.format(task.leftToBePaid)
+        tv_amount_paid_label.text = "Amount paid (${task.paymentMethod.name()})"
+        tv_amount_paid_value.text = pricingFormat.format(task.paidAmount)
     }
 
     companion object {

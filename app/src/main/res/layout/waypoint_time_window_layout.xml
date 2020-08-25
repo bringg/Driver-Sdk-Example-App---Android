@@ -96,4 +96,70 @@
         app:layout_constraintTop_toTopOf="@+id/eta_title"
         tools:text="00:00" />
 
+    <TextView
+        android:id="@+id/wp_started_at_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:includeFontPadding="false"
+        android:text="Started At:"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eta_title" />
+
+    <TextView
+        android:id="@+id/wp_started_at_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/wp_started_at_title"
+        app:layout_constraintTop_toTopOf="@+id/wp_started_at_title"
+        tools:text="00:00" />
+
+    <TextView
+        android:id="@+id/wp_checkin_at_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:includeFontPadding="false"
+        android:text="Arrived At:"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wp_started_at_title" />
+
+    <TextView
+        android:id="@+id/wp_checkin_at_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/wp_checkin_at_title"
+        app:layout_constraintTop_toTopOf="@+id/wp_checkin_at_title"
+        tools:text="00:00" />
+
+    <TextView
+        android:id="@+id/wp_checkout_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:includeFontPadding="false"
+        android:text="Left At:"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wp_checkin_at_title" />
+
+    <TextView
+        android:id="@+id/wp_checkout_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/wp_checkout_title"
+        app:layout_constraintTop_toTopOf="@+id/wp_checkout_title"
+        tools:text="00:00" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

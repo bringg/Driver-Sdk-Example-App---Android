@@ -61,6 +61,8 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                         driverSdk.task.leaveWayPoint(waypoint.id, object : ResultCallback<WaypointLeaveResult> {
                             override fun onResult(result: WaypointLeaveResult) {
                                 Log.i(TAG, "leave waypoint result=$result")
+                                if (result.success && result.nextWaypoint == null)
+                                    navController.navigateUp()
                             }
                         })
                     }
