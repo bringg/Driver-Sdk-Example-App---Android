@@ -9,17 +9,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
+import com.bringg.android.example.driversdk.ui.AuthenticatedFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import driver_sdk.DriverSdkProvider
 import driver_sdk.models.Waypoint
 import kotlinx.android.synthetic.main.task_fragment.*
 
 
-class TaskFragment : Fragment() {
+class TaskFragment : AuthenticatedFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

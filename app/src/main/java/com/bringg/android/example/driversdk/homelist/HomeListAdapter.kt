@@ -5,19 +5,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
 import driver_sdk.location.home.HomeState
 import driver_sdk.models.Home
-import java.util.*
+import java.util.LinkedList
 
 class HomeListAdapter(fragment: Fragment, private val homeMap: LiveData<Map<Home, HomeState>>) : RecyclerView.Adapter<HomeViewHolder>() {
 
     private val homeList: MutableList<Pair<Home, HomeState>> = LinkedList()
 
     init {
-        homeMap.observe(fragment, Observer {
+        homeMap.observe(fragment, {
             Log.i("homes changed", "home states:")
             it.forEach { entry ->
                 Log.i("homes changed", "homeId=${entry.key.id}, state=${entry.value}")

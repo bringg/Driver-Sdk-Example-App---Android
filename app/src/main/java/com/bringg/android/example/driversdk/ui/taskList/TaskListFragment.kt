@@ -7,14 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.PermissionChecker
-import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.homelist.HomeListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskViewHolder
+import com.bringg.android.example.driversdk.ui.AuthenticatedFragment
 import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.ShiftEndResult
@@ -22,7 +21,7 @@ import driver_sdk.driver.model.result.ShiftStartResult
 import driver_sdk.models.Task
 import kotlinx.android.synthetic.main.task_list_fragment.*
 
-class TaskListFragment : Fragment() {
+class TaskListFragment : AuthenticatedFragment() {
 
     private val TAG = "TaskListFragment"
     private val START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE = 5
@@ -85,8 +84,7 @@ class TaskListFragment : Fragment() {
 
         val adapter = TaskListAdapter(this, taskList, object : TaskViewHolder.ClickListener {
             override fun onTaskItemClick(task: Task) {
-                val args = bundleOf("task_id" to task.getId())
-                findNavController().navigate(R.id.action_task_list_to_task_fragment, args)
+                findNavController().navigate(TaskListFragmentDirections.actionTaskListToTaskFragment(task.getId()))
             }
         })
         rv_task_list.adapter = adapter

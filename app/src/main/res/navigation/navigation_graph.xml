@@ -3,30 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@+id/fragment_welcome">
+    app:startDestination="@id/task_list_fragment">
 
-    <fragment
-        android:id="@+id/fragment_welcome"
-        android:name="com.bringg.android.example.driversdk.ui.WelcomeFragment"
-        android:label="@string/login">
-        <action
-            android:id="@+id/action_on_logged_in"
-            app:destination="@id/task_list_fragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
-    </fragment>
+    <action
+        android:id="@+id/login_action"
+        app:destination="@id/nav_graph_login"
+        app:popUpTo="@id/nav_graph_login"
+        app:popUpToInclusive="true" />
 
-    <fragment
-        android:id="@+id/login_fragment"
-        android:name="com.bringg.android.example.driversdk.ui.login.LoginFragment"
-        android:label="@string/login"
-        tools:layout="@layout/fragment_login">
-        <action
-            android:id="@+id/action_on_logged_in"
-            app:destination="@id/task_list_fragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
-    </fragment>
     <fragment
         android:id="@+id/task_list_fragment"
         android:name="com.bringg.android.example.driversdk.ui.taskList.TaskListFragment"
@@ -34,41 +18,84 @@
         tools:layout="@layout/task_list_fragment">
         <action
             android:id="@+id/action_task_list_to_task_fragment"
-            app:destination="@id/task_fragment"
+            app:destination="@id/nav_graph_task"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
-    <fragment
-        android:id="@+id/task_fragment"
-        android:name="com.bringg.android.example.driversdk.ui.task.TaskFragment"
-        android:label="@string/order_description"
-        tools:layout="@layout/task_fragment">
-        <action
-            android:id="@+id/action_task_fragment_to_inventory_fragment"
-            app:destination="@id/inventory_fragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
-    </fragment>
-    <fragment
-        android:id="@+id/inventory_fragment"
-        android:name="com.bringg.android.example.driversdk.ui.inventory.InventoryListFragment"
-        android:label="@string/order_inventory"
-        tools:layout="@layout/fragment_inventory_list" />
-    <dialog
-        android:id="@+id/login_merchant_selection"
-        android:name="com.bringg.android.example.driversdk.ui.login.LoginMerchantSelectionFragment"
-        android:label="@string/login_merchant_selection"
-        tools:layout="@layout/fragment_login_merchant_selection" />
-    <dialog
-        android:id="@+id/dialog_cancel_task"
-        android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
-        android:label="@string/cancel_task"
-        tools:layout="@layout/fragment_cancel_task_reason_selection" />
-    <dialog
-        android:id="@+id/dialog_actions"
-        android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
-        android:label="@string/cancel_task"
-        tools:layout="@layout/fragment_cancel_task_reason_selection">
-        <argument android:name="actions" />
-    </dialog>
+    <navigation
+        android:id="@+id/nav_graph_login"
+        app:popUpTo="@id/login_merchant_selection"
+        app:popUpToInclusive="true"
+        app:startDestination="@id/login_fragment">
+        <fragment
+            android:id="@+id/login_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.login.LoginFragment"
+            android:label="@string/login"
+            tools:layout="@layout/fragment_login">
+            <action
+                android:id="@+id/action_login_fragment_to_login_merchant_selection"
+                app:destination="@id/login_merchant_selection" />
+            <action
+                android:id="@+id/action_on_user_login_done"
+                app:popUpTo="@id/nav_graph_login" />
+
+        </fragment>
+        <dialog
+            android:id="@+id/login_merchant_selection"
+            android:name="com.bringg.android.example.driversdk.ui.login.LoginMerchantSelectionFragment"
+            android:label="@string/login_merchant_selection"
+            tools:layout="@layout/fragment_login_merchant_selection">
+            <action
+                android:id="@+id/action_on_user_login_done"
+                app:popUpTo="@id/nav_graph_login" />
+            <argument
+                android:name="merchants"
+                app:argType="driver_sdk.account.LoginMerchant[]" />
+        </dialog>
+    </navigation>
+    <navigation
+        android:id="@+id/nav_graph_task"
+        android:label="Task"
+        app:startDestination="@id/task_fragment">
+        <argument
+            android:name="task_id"
+            app:argType="long" />
+        <fragment
+            android:id="@+id/task_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.task.TaskFragment"
+            android:label="@string/order_description"
+            tools:layout="@layout/task_fragment">
+            <action
+                android:id="@+id/action_task_fragment_to_inventory_fragment"
+                app:destination="@id/inventory_fragment"
+                app:enterAnim="@anim/fragment_fade_enter"
+                app:exitAnim="@anim/fragment_fade_exit" />
+            <action
+                android:id="@+id/action_task_fragment_to_dialog_cancel_task"
+                app:destination="@id/dialog_cancel_task" />
+            <action
+                android:id="@+id/action_task_fragment_to_dialog_actions"
+                app:destination="@id/dialog_actions" />
+            <argument
+                android:name="task_id"
+                app:argType="long" />
+        </fragment>
+        <fragment
+            android:id="@+id/inventory_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.inventory.InventoryListFragment"
+            android:label="@string/order_inventory"
+            tools:layout="@layout/fragment_inventory_list" />
+        <dialog
+            android:id="@+id/dialog_actions"
+            android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
+            android:label="@string/cancel_task"
+            tools:layout="@layout/fragment_cancel_task_reason_selection">
+            <argument android:name="actions" />
+        </dialog>
+        <dialog
+            android:id="@+id/dialog_cancel_task"
+            android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
+            android:label="@string/cancel_task"
+            tools:layout="@layout/fragment_cancel_task_reason_selection" />
+    </navigation>
 </navigation>

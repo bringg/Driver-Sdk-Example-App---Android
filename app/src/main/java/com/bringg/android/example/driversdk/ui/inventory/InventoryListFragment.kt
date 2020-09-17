@@ -6,17 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
+import com.bringg.android.example.driversdk.ui.AuthenticatedFragment
 import driver_sdk.DriverSdkProvider.driverSdk
 import driver_sdk.models.Inventory
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedList
 
-class InventoryListFragment : Fragment(), InventoryItemPresenter {
+class InventoryListFragment : AuthenticatedFragment(), InventoryItemPresenter {
 
     private lateinit var inventoryRecyclerView: RecyclerView
     private lateinit var inventoryAdapter: TaskInventoryRecyclerAdapter

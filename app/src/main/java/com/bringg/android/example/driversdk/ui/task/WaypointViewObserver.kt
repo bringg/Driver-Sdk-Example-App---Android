@@ -13,6 +13,7 @@ import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.ShiftStartResult
 import driver_sdk.driver.model.result.TaskAcceptResult
+import driver_sdk.driver.model.result.TaskRejectResult
 import driver_sdk.driver.model.result.TaskStartResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
@@ -21,12 +22,14 @@ import driver_sdk.models.Waypoint
 
 class WaypointViewObserver(private val waypointId: Long, view: View, private val navController: NavController) : Observer<Waypoint?>, InventoryListPresenter {
 
-    private val TAG = "WaypointFragment"
+    private val TAG = "WaypointViewObserver"
     private val btnNextAction = view.findViewById<TextView>(R.id.btn_waypoint_progress)
+    private val btnReject = view.findViewById<TextView>(R.id.btn_waypoint_reject)
     private val waypointView = view.findViewById<WaypointView>(R.id.waypoint_view)
     private val driverSdk = DriverSdkProvider.driverSdk()
 
     override fun onChanged(waypoint: Waypoint?) {
+        btnReject.visibility = View.GONE
         if (waypoint == null) {
             waypointView.refresh(null, null, this)
             btnNextAction.isEnabled = true
@@ -40,6 +43,19 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                 btnNextAction.text = "Done"
                 btnNextAction.setOnClickListener { navController.navigateUp() }
             } else if (!task!!.isAccepted) {
+                btnReject.setOnClickListener {
+                    driverSdk.task.rejectTask(task.getId(), object : ResultCallback<TaskRejectResult> {
+                        override fun onResult(result: TaskRejectResult) {
+                            if (result.success) {
+                                Log.i(TAG, "task was successfully rejected, LiveData event will be posted, result=$result")
+                            } else {
+                                Log.i(TAG, "rejecting the task failed, error=${result.error}")
+                            }
+                        }
+                    }
+                    )
+                }
+                btnReject.visibility = View.VISIBLE
                 btnNextAction.isEnabled = true
                 btnNextAction.text = "Accept Order"
                 btnNextAction.setOnClickListener {
@@ -61,8 +77,9 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                         driverSdk.task.leaveWayPoint(waypoint.id, object : ResultCallback<WaypointLeaveResult> {
                             override fun onResult(result: WaypointLeaveResult) {
                                 Log.i(TAG, "leave waypoint result=$result")
-                                if (result.success && result.nextWaypoint == null)
-                                    navController.navigateUp()
+                                if (result.requiredActions.isNotEmpty()) {
+
+                                }
                             }
                         })
                     }
