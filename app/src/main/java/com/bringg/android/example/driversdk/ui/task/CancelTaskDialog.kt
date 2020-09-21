@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.list_item_cancel_reason.view.*
 
 class CancelTaskDialog : DialogFragment() {
 
-    private fun taskId() = requireArguments().getLong("task_id")
+    private val args: CancelTaskDialogArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_cancel_task_reason_selection, container, false)
@@ -30,7 +31,7 @@ class CancelTaskDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_cancel_reasons.adapter = CancelReasonsAdapter(
-            requireArguments().getStringArrayList("reasons") ?: emptyList(),
+            DriverSdkProvider.driverSdk().data.task(args.taskId).value?.cancelReasons?.toList() ?: emptyList(),
             View.OnClickListener {
                 cancelTask(it.tag as String)
             }
@@ -38,7 +39,7 @@ class CancelTaskDialog : DialogFragment() {
     }
 
     private fun cancelTask(selectedReason: String) {
-        DriverSdkProvider.driverSdk().task.cancelTask(taskId(), selectedReason, cancel_task_custom_reason.editText?.text.toString(), object : ResultCallback<TaskCancelResult> {
+        DriverSdkProvider.driverSdk().task.cancelTask(args.taskId, selectedReason, cancel_task_custom_reason.editText?.text.toString(), object : ResultCallback<TaskCancelResult> {
             override fun onResult(result: TaskCancelResult) {
                 Log.i("CancelTask", "cancel task result=$result")
                 if (result.success) {
@@ -53,7 +54,7 @@ class CancelTaskDialog : DialogFragment() {
     }
 
     private fun handleMandatoryCancelTaskActions(actions: Collection<TaskActionItem>) {
-        val actionData = DriverActionData.Builder(actions.first()).taskId(taskId()).build()
+        val actionData = DriverActionData.Builder(actions.first()).taskId(args.taskId).build()
         DriverSdkProvider.driverSdk().actions.submitNote(actionData, "this is my note",
             object : ResultCallback<NoteResult> {
                 override fun onResult(result: NoteResult) {
@@ -62,18 +63,18 @@ class CancelTaskDialog : DialogFragment() {
             })
     }
 
-    class CancelReasonsAdapter(private val reasons: List<String>, private val itemClickListener: View.OnClickListener) : RecyclerView.Adapter<MerchantViewHolder>(
+    class CancelReasonsAdapter(private val reasons: List<String>, private val itemClickListener: View.OnClickListener) : RecyclerView.Adapter<CancelReasonViewHolder>(
     ) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            MerchantViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_cancel_reason, parent, false), itemClickListener)
+            CancelReasonViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_cancel_reason, parent, false), itemClickListener)
 
         override fun getItemCount() = reasons.size
 
-        override fun onBindViewHolder(holder: MerchantViewHolder, position: Int) = holder.bind(reasons[position])
+        override fun onBindViewHolder(holder: CancelReasonViewHolder, position: Int) = holder.bind(reasons[position])
 
     }
 
-    class MerchantViewHolder(itemView: View, itemClickListener: View.OnClickListener) : RecyclerView.ViewHolder(itemView) {
+    class CancelReasonViewHolder(itemView: View, itemClickListener: View.OnClickListener) : RecyclerView.ViewHolder(itemView) {
         init {
             itemView.setOnClickListener(itemClickListener)
         }

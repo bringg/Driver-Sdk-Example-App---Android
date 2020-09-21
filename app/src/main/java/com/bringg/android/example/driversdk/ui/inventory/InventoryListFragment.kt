@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ class InventoryListFragment : AuthenticatedFragment(), InventoryItemPresenter {
 
     private lateinit var inventoryRecyclerView: RecyclerView
     private lateinit var inventoryAdapter: TaskInventoryRecyclerAdapter
+    private val args: InventoryListFragmentArgs by navArgs()
 
     private val navigationFlow = LinkedList<Inventory>()
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -70,8 +72,7 @@ class InventoryListFragment : AuthenticatedFragment(), InventoryItemPresenter {
 
     private fun showRootList() {
         navigationFlow.clear()
-        val inventories = ArrayList(driverSdk().data.waypoint(requireArguments().getLong("waypoint_id")).value!!.flattenedInventoryList)
-
+        val inventories = ArrayList(driverSdk().data.waypoint(args.waypointId).value!!.inventories)
         inventoryAdapter.setInventoryItems(inventories)
     }
 

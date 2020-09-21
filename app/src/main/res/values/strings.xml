@@ -106,5 +106,7 @@
     <string name="choose_cancel_reason">Choose Cancel Reason</string>
     <string name="apply">Apply</string>
 
+    <string name="mandatory_actions_not_taken_title">"Following actions must be completed:"</string>
+    <string name="label_task_actions">Task Actions</string>
 
 </resources>

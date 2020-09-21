@@ -38,7 +38,6 @@
             <action
                 android:id="@+id/action_on_user_login_done"
                 app:popUpTo="@id/nav_graph_login" />
-
         </fragment>
         <dialog
             android:id="@+id/login_merchant_selection"
@@ -84,18 +83,28 @@
             android:id="@+id/inventory_fragment"
             android:name="com.bringg.android.example.driversdk.ui.inventory.InventoryListFragment"
             android:label="@string/order_inventory"
-            tools:layout="@layout/fragment_inventory_list" />
+            tools:layout="@layout/fragment_inventory_list">
+            <argument
+                android:name="waypoint_id"
+                app:argType="long" />
+        </fragment>
         <dialog
             android:id="@+id/dialog_actions"
             android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
-            android:label="@string/cancel_task"
+            android:label="@string/label_task_actions"
             tools:layout="@layout/fragment_cancel_task_reason_selection">
-            <argument android:name="actions" />
+            <argument
+                android:name="actions"
+                app:argType="driver_sdk.models.configuration.TaskActionItem[]" />
         </dialog>
         <dialog
             android:id="@+id/dialog_cancel_task"
             android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
             android:label="@string/cancel_task"
-            tools:layout="@layout/fragment_cancel_task_reason_selection" />
+            tools:layout="@layout/fragment_cancel_task_reason_selection">
+            <argument
+                android:name="task_id"
+                app:argType="long" />
+        </dialog>
     </navigation>
 </navigation>

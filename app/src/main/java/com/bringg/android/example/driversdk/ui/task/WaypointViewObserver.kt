@@ -3,7 +3,6 @@ package com.bringg.android.example.driversdk.ui.task
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.bringg.android.example.driversdk.R
@@ -78,7 +77,7 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
                             override fun onResult(result: WaypointLeaveResult) {
                                 Log.i(TAG, "leave waypoint result=$result")
                                 if (result.requiredActions.isNotEmpty()) {
-
+                                    navController.navigate(TaskFragmentDirections.actionTaskFragmentToDialogActions(result.requiredActions.toTypedArray()))
                                 }
                             }
                         })
@@ -127,7 +126,6 @@ class WaypointViewObserver(private val waypointId: Long, view: View, private val
     }
 
     override fun showInventoryList(inventory: Inventory) {
-        val args = bundleOf("waypoint_id" to waypointId)
-        navController.navigate(R.id.action_task_fragment_to_inventory_fragment, args)
+        navController.navigate(TaskFragmentDirections.actionTaskFragmentToInventoryFragment(waypointId))
     }
 }
