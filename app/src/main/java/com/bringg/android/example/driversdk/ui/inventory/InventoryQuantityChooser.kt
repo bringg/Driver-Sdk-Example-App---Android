@@ -10,6 +10,10 @@ import com.bringg.android.example.driversdk.R
 import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
 import driver_sdk.content.inventory.InventoryQtyChangeResult
+import driver_sdk.content.inventory.InventoryQtyChangeResult.Error
+import driver_sdk.content.inventory.InventoryQtyChangeResult.Replacement
+import driver_sdk.content.inventory.InventoryQtyChangeResult.Success
+import driver_sdk.content.inventory.ReplaceInventoryOptions
 import driver_sdk.models.Inventory
 import kotlinx.android.synthetic.main.inventory_quantity_chooser.view.*
 
@@ -34,7 +38,6 @@ class InventoryQuantityChooser @JvmOverloads constructor(
             checkAcceptAll()
             DriverSdkProvider.driverSdk().inventory.accept(inventory.id, inventory.originalQuantity, object : ResultCallback<InventoryQtyChangeResult> {
                 override fun onResult(result: InventoryQtyChangeResult) {
-                    result.inventory
                     Log.i(TAG, "accept all result for itemId${inventory.id} = $result")
                 }
             })
@@ -57,10 +60,22 @@ class InventoryQuantityChooser @JvmOverloads constructor(
             txt_partial.error = null
             DriverSdkProvider.driverSdk().inventory.accept(inventory.id, qty, object : ResultCallback<InventoryQtyChangeResult> {
                 override fun onResult(result: InventoryQtyChangeResult) {
-                    if (result.success()) {
-                        Log.i(TAG, "accept $qty/${inventory.originalQuantity} units result for itemId${inventory.id}")
-                    } else {
-                        Log.i(TAG, "can't accept quantity, error=${result.error}")
+                    when (result) {
+                        is Success -> {
+                            val updatedItem = result.inventory
+                            Log.i(TAG, "accept $qty/${updatedItem.originalQuantity} units result, updatedItem=$updatedItem")
+                        }
+                        is Replacement -> {
+                            Log.i(TAG, "replacement items are available for rejected items, result=${result}")
+                            // you may use the replacer to replace rejected items
+                            //TODO implement item replacement UI
+                            val inventoryReplacer = result.inventoryReplacer
+                            while (inventoryReplacer.hasReplacementItems()) {
+                                val item = inventoryReplacer.getNextItem()
+                                inventoryReplacer.dismissReplaceOption(ReplaceInventoryOptions(item!!.inventoryItem))
+                            }
+                        }
+                        is Error -> Log.i(TAG, "can't accept quantity, result=${result}")
                     }
                 }
             })
