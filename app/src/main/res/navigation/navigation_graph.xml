@@ -74,7 +74,7 @@
                 app:destination="@id/dialog_cancel_task" />
             <action
                 android:id="@+id/action_task_fragment_to_dialog_actions"
-                app:destination="@id/dialog_actions" />
+                app:destination="@id/nav_graph_task_actions" />
             <argument
                 android:name="task_id"
                 app:argType="long" />
@@ -89,15 +89,6 @@
                 app:argType="long" />
         </fragment>
         <dialog
-            android:id="@+id/dialog_actions"
-            android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
-            android:label="@string/label_task_actions"
-            tools:layout="@layout/fragment_cancel_task_reason_selection">
-            <argument
-                android:name="actions"
-                app:argType="driver_sdk.models.configuration.TaskActionItem[]" />
-        </dialog>
-        <dialog
             android:id="@+id/dialog_cancel_task"
             android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
             android:label="@string/cancel_task"
@@ -106,5 +97,59 @@
                 android:name="task_id"
                 app:argType="long" />
         </dialog>
+    </navigation>
+    <navigation
+        android:id="@+id/nav_graph_task_actions"
+        app:popUpTo="@id/task_fragment"
+        app:popUpToInclusive="true"
+        app:startDestination="@id/dialog_actions">
+        <argument
+            android:name="actions"
+            app:argType="driver_sdk.models.configuration.TaskActionItem[]" />
+        <dialog
+            android:id="@+id/dialog_actions"
+            android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
+            android:label="@string/label_task_actions"
+            tools:layout="@layout/fragment_task_actions_dialog">
+            <action
+                android:id="@+id/dialog_actions_to_add_note_fragment"
+                app:destination="@id/add_note_fragment" />
+            <action
+                android:id="@+id/dialog_actions_to_add_image_fragment"
+                app:destination="@id/add_image_fragment" />
+            <action
+                android:id="@+id/dialog_actions_to_add_form_fragment"
+                app:destination="@id/add_form_fragment" />
+        </dialog>
+
+        <fragment
+            android:id="@+id/add_note_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.task.actions.AddNoteFragment"
+            android:label="@string/label_add_note"
+            tools:layout="@layout/fragment_add_note">
+            <argument
+                android:name="action_data"
+                app:argType="driver_sdk.models.configuration.TaskActionItem"/>
+        </fragment>
+        <fragment
+            android:id="@+id/add_image_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.task.actions.AddImageFragment"
+            android:label="@string/label_add_image"
+            tools:layout="@layout/fragment_add_image">
+            <argument
+                android:name="action_data"
+                app:argType="driver_sdk.models.configuration.TaskActionItem"/>
+        </fragment>
+        <fragment
+            android:id="@+id/add_form_fragment"
+            android:name="com.bringg.android.example.driversdk.ui.task.actions.AddFormFragment"
+            android:label="@string/label_add_form"
+            tools:layout="@layout/fragment_add_form">
+            <argument
+                android:name="action_data"
+                app:argType="driver_sdk.models.configuration.TaskActionItem"/>
+        </fragment>
+
+
     </navigation>
 </navigation>

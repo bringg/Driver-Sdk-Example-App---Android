@@ -5,16 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import com.bringg.android.example.driversdk.NavGraphTaskActionsArgs
 import com.bringg.android.example.driversdk.R
+import driver_sdk.logging.BringgLog
+import driver_sdk.models.configuration.TaskAction
 import driver_sdk.models.configuration.TaskActionItem
 import kotlinx.android.synthetic.main.fragment_task_actions_dialog.*
 import kotlinx.android.synthetic.main.list_item_task_action.view.*
 
 class ActionsDialog : DialogFragment() {
 
-    private val args: ActionsDialogArgs by navArgs()
+    private val args: NavGraphTaskActionsArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_task_actions_dialog, container, false)
@@ -23,12 +27,37 @@ class ActionsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_actions.adapter = TaskActionsAdapter(
-            args.actions,
-            {
-                //TODO() handle actions
-            }
-        )
+            args.actions
+        ) {
+            clickTaskAction(it)
+        }
     }
+
+    private fun clickTaskAction(it: View) {
+        BringgLog.info("ActionsDialog", "ActionsDialog + ${it.tag} ")
+        val taskActionItem: TaskActionItem = it.tag as TaskActionItem
+        when (taskActionItem.taskAction) {
+            TaskAction.TAKE_NOTE -> navigateToAddNoteFragment(taskActionItem)
+            TaskAction.TAKE_PICTURE -> navigateToAddImageFragment(taskActionItem)
+            TaskAction.FORM -> navigateToAddFormFragment(taskActionItem)
+        }
+    }
+
+    private fun navigateToAddNoteFragment(taskActionItem: TaskActionItem) {
+        findNavController().navigate(ActionsDialogDirections.dialogActionsToAddNoteFragment(taskActionItem))
+    }
+
+    private fun navigateToAddImageFragment(taskActionItem: TaskActionItem) {
+        findNavController().navigate(ActionsDialogDirections.dialogActionsToAddImageFragment(taskActionItem))
+    }
+
+    private fun navigateToAddFormFragment(taskActionItem: TaskActionItem) {
+        findNavController().navigate(ActionsDialogDirections.dialogActionsToAddFormFragment(taskActionItem))
+    }
+
+
+
+
 
     class TaskActionsAdapter(private val actions: Array<TaskActionItem>, private val itemClickListener: View.OnClickListener) : RecyclerView.Adapter<TaskActionViewHolder>(
     ) {
