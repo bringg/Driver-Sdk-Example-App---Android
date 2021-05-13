@@ -21,6 +21,20 @@
             app:destination="@id/nav_graph_task"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_task_list_to_cluster_fragment"
+            app:destination="@id/cluster_fragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/cluster_fragment"
+        android:name="com.bringg.android.example.driversdk.ui.cluster.ClusterFragment"
+        android:label="@string/order_description"
+        tools:layout="@layout/fragment_cluster">
+        <argument
+            android:name="waypoint"
+            app:argType="driver_sdk.models.tasks.Waypoint[]" />
     </fragment>
     <navigation
         android:id="@+id/nav_graph_login"
