@@ -115,7 +115,7 @@ class WaypointView : CardView {
         val sb = getFormattedAddressText(waypoint)
         addressText.text = sb.toString()
         secondLineAddress.text = waypoint.secondLineAddress
-        customerAddressType.text = waypoint.addressType.name().substring(waypoint.addressType.name().lastIndexOf("_") + 1)
+        customerAddressType.text = waypoint.addressType.name.substring(waypoint.addressType.name.lastIndexOf("_") + 1)
         customerAddressName.text = waypoint.locationName
     }
 
@@ -141,7 +141,7 @@ class WaypointView : CardView {
         tv_delivery_fee_value.text = pricingFormat.format(task.deliveryPrice)
         tv_total_value.text = pricingFormat.format(task.totalPrice)
         tv_total_to_be_paid_value.text = pricingFormat.format(task.leftToBePaid)
-        tv_amount_paid_label.text = "Amount paid (${task.paymentMethod.name()})"
+        tv_amount_paid_label.text = "Amount paid (${task.paymentMethod})"
         tv_amount_paid_value.text = pricingFormat.format(task.paidAmount)
     }
 
