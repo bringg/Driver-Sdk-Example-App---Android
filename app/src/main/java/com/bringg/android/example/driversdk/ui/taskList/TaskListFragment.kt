@@ -73,7 +73,7 @@ class TaskListFragment : AuthenticatedFragment() {
         home_state_recycler.adapter = HomeListAdapter(this, driverSdk.data.homeMap)
 
         val taskList = driverSdk.data.taskList
-        val clusters = driverSdk.data.clusterAreas
+        val clusters = driverSdk.data.clustersList
 
         task_list_swipe_to_refresh.setOnRefreshListener {
             Log.i(TAG, "onRefresh called from SwipeRefreshLayout")

@@ -44,7 +44,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:layout_below="@id/task_description"
-                android:layout_toStartOf="@+id/details_layout"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="normal"
@@ -56,41 +55,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:layout_below="@+id/way_point_address"
-                android:layout_toStartOf="@+id/details_layout"
                 android:textColor="@color/task_list_description_grey"
                 android:textSize="12sp"
                 android:textStyle="normal"
                 tools:text="Total way points:" />
 
-            <TextView
-                android:id="@+id/customer_address_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/total_way_points"
-                android:layout_alignStart="@+id/way_point_address"
-                android:layout_alignEnd="@id/way_point_address"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="6dp"
-                android:textSize="12sp"
-                android:textStyle="normal"
-                tools:text="Customer address name" />
-
-            <LinearLayout
-                android:id="@+id/details_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="end"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/task_special_status_second_label"
-                    style="@style/TextAppearance.Label"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/task_list_item_pickup_bg"
-                    tools:text="@string/inventory_collect_label" />
-
-            </LinearLayout>
         </RelativeLayout>
 
     </LinearLayout>
