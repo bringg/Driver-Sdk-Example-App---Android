@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
+import driver_sdk.DriverSdkProvider
 import driver_sdk.account.LoginMerchant
 import driver_sdk.driver.model.result.DriverLoginResult
 
@@ -113,6 +114,12 @@ class LoginFragment : Fragment() {
             loadingProgressBar.visibility = View.VISIBLE
             loginWithEmail(usernameEditText, passwordEditText)
         }
+
+        DriverSdkProvider.driverSdk().data.login.observe(viewLifecycleOwner) {
+            if (true == it) {
+                showLoginSuccess()
+            }
+        }
     }
 
     private fun loginWithEmail(usernameEditText: EditText, passwordEditText: EditText) {
@@ -132,7 +139,7 @@ class LoginFragment : Fragment() {
 
     private fun showLoginFailed(result: DriverLoginResult) {
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, result.error!!.name(), Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, result.error!!.name, Toast.LENGTH_LONG).show()
         savedStateHandle.set(IS_LOGGED_IN, false)
     }
 

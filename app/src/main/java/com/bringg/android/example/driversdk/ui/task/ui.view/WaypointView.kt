@@ -12,10 +12,10 @@ import com.bumptech.glide.Glide
 import driver_sdk.models.Task
 import driver_sdk.models.Waypoint
 import driver_sdk.util.TimeUtil
+import java.util.Locale
 import kotlinx.android.synthetic.main.fragment_waypoint_list_header.view.*
 import kotlinx.android.synthetic.main.layout_way_point_title.view.*
 import kotlinx.android.synthetic.main.waypoint_time_window_layout.view.*
-import java.util.*
 
 class WaypointView : CardView {
     private val pricingFormat = "%.2f"
@@ -106,8 +106,8 @@ class WaypointView : CardView {
 
     private fun updateStatus(task: Task, waypoint: Waypoint) {
         findViewById<TextView>(R.id.way_point_description_text).text = task.title
-        task_status_label_text.text = "${TaskStatusMap.getUserStatus(task.status).toUpperCase(Locale.US)}(${task.status})"
-        way_point_status_label_text.text = "${TaskStatusMap.getUserStatus(waypoint.status).toUpperCase(Locale.US)}(${waypoint.status})"
+        task_status_label_text.text = "${TaskStatusMap.getUserStatus(task.status).uppercase(Locale.US)}(${task.status})"
+        way_point_status_label_text.text = "${TaskStatusMap.getUserStatus(waypoint.status).uppercase(Locale.US)}(${waypoint.status})"
         waypoint_is_current_label.visibility = if (waypoint.id == task.currentWayPointId) View.VISIBLE else GONE
     }
 
@@ -115,7 +115,7 @@ class WaypointView : CardView {
         val sb = getFormattedAddressText(waypoint)
         addressText.text = sb.toString()
         secondLineAddress.text = waypoint.secondLineAddress
-        customerAddressType.text = waypoint.addressType.name().substring(waypoint.addressType.name().lastIndexOf("_") + 1)
+        customerAddressType.text = waypoint.addressType.name.substring(waypoint.addressType.name.lastIndexOf("_") + 1)
         customerAddressName.text = waypoint.locationName
     }
 
@@ -141,7 +141,7 @@ class WaypointView : CardView {
         tv_delivery_fee_value.text = pricingFormat.format(task.deliveryPrice)
         tv_total_value.text = pricingFormat.format(task.totalPrice)
         tv_total_to_be_paid_value.text = pricingFormat.format(task.leftToBePaid)
-        tv_amount_paid_label.text = "Amount paid (${task.paymentMethod.name()})"
+        tv_amount_paid_label.text = "Amount paid (${task.paymentMethod.name})"
         tv_amount_paid_value.text = pricingFormat.format(task.paidAmount)
     }
 

@@ -109,4 +109,21 @@
     <string name="mandatory_actions_not_taken_title">"Following actions must be completed:"</string>
     <string name="label_task_actions">Task Actions</string>
 
+    <plurals name="merge_orders_button">
+        <item quantity="zero">Merge Orders</item>
+        <item quantity="other">Merge %d Orders</item>
+    </plurals>
+
+    <plurals name="un_merge_orders_button">
+        <item quantity="zero">Break Merged Order</item>
+        <item quantity="one">Break Merged Order</item>
+        <item quantity="other">Break %d Merged Orders</item>
+    </plurals>
+
+    <plurals name="cancel_task_button">
+        <item quantity="zero">Cancel Order</item>
+        <item quantity="one">Cancel Order</item>
+        <item quantity="other">Cancel %d Orders</item>
+    </plurals>
+
 </resources>
