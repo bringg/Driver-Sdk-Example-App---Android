@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.task_fragment.*
 
 class TaskFragment : AuthenticatedFragment() {
 
-    val args: TaskFragmentArgs by navArgs()
+    private val args: TaskFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

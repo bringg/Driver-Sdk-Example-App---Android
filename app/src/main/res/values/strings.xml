@@ -87,6 +87,8 @@
     <string name="deliver_tag_text">"Deliver"</string>
     <string name="delivered">"Dropped Off"</string>
     <string name="delivering">"Dropping Off"</string>
+    <string name="pickup_area">"Pickup Area"</string>
+    <string name="dropoff_area">"Dropoff Area"</string>
 
 
     <!-- Strings related to login -->
