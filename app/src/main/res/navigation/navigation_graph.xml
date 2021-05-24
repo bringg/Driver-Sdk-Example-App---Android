@@ -32,9 +32,6 @@
         android:name="com.bringg.android.example.driversdk.ui.cluster.ClusterFragment"
         android:label="@string/order_description"
         tools:layout="@layout/fragment_cluster">
-        <argument
-            android:name="waypoint"
-            app:argType="driver_sdk.models.tasks.Waypoint[]" />
     </fragment>
     <navigation
         android:id="@+id/nav_graph_login"

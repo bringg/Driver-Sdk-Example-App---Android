@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
-import driver_sdk.models.tasks.ClusterArea
+import driver_sdk.models.Cluster
 
-class ClusterListAdapter(fragment: Fragment, private val clusterList: LiveData<List<ClusterArea>>, private val clusterViewHolderClickListener: ClusterViewHolder.ClickListener) : RecyclerView.Adapter<ClusterViewHolder>() {
+class ClusterListAdapter(fragment: Fragment, private val clusterList: LiveData<List<Cluster>>, private val clusterViewHolderClickListener: ClusterViewHolder.ClickListener) : RecyclerView.Adapter<ClusterViewHolder>() {
 
     init {
         clusterList.observe(fragment, Observer { notifyDataSetChanged() })

@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
+import driver_sdk.models.Cluster
 import driver_sdk.models.tasks.ClusterArea
 
 class ClusterViewHolder(
@@ -12,7 +13,7 @@ class ClusterViewHolder(
 ) : RecyclerView.ViewHolder(itemView) {
 
     interface ClickListener {
-        fun onClusterItemClick(cluster: ClusterArea)
+        fun onClusterItemClick(cluster: Cluster)
     }
 
     private val TAG = "ClusterViewHolder"
@@ -29,11 +30,11 @@ class ClusterViewHolder(
         address = view.findViewById(R.id.way_point_address)
     }
 
-    fun bind(clusterArea: ClusterArea) {
+    fun bind(clusterArea: Cluster) {
         itemView.tag = clusterArea
 
         title.setText(if (clusterArea.isPickup) R.string.pickup_area else R.string.dropoff_area)
         totalWayPoints.text = String.format("Total way points: ${clusterArea.wayPoints.size}")
-        address.text = clusterArea.address
+        address.text = clusterArea.wayPoints[0].address
     }
 }

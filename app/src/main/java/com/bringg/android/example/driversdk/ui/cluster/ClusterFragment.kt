@@ -5,14 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.navArgs
+import androidx.fragment.app.activityViewModels
 import com.bringg.android.example.driversdk.R
+import com.bringg.android.example.driversdk.clustersList.ClusterViewModel
 import com.bringg.android.example.driversdk.waypointList.WayPointListAdapter
 import kotlinx.android.synthetic.main.fragment_cluster.*
 
 class ClusterFragment : Fragment() {
 
-    private val args: ClusterFragmentArgs by navArgs()
+    private val clusterViewModel: ClusterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,6 +26,6 @@ class ClusterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rv_waypoint_list.adapter = WayPointListAdapter(args.waypoint.asList())
+        rv_waypoint_list.adapter = WayPointListAdapter(this, clusterViewModel.waypoints)
     }
 }

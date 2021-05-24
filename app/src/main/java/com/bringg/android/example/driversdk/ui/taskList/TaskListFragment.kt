@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.PermissionChecker
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.clustersList.ClusterListAdapter
 import com.bringg.android.example.driversdk.clustersList.ClusterViewHolder
+import com.bringg.android.example.driversdk.clustersList.ClusterViewModel
 import com.bringg.android.example.driversdk.homelist.HomeListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskViewHolder
@@ -20,14 +22,15 @@ import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.ShiftEndResult
 import driver_sdk.driver.model.result.ShiftStartResult
+import driver_sdk.models.Cluster
 import driver_sdk.models.Task
-import driver_sdk.models.tasks.ClusterArea
 import kotlinx.android.synthetic.main.task_list_fragment.*
 
 class TaskListFragment : AuthenticatedFragment() {
 
     private val TAG = "TaskListFragment"
     private val START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE = 5
+    private val clusterViewModel: ClusterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,7 +76,7 @@ class TaskListFragment : AuthenticatedFragment() {
         home_state_recycler.adapter = HomeListAdapter(this, driverSdk.data.homeMap)
 
         val taskList = driverSdk.data.taskList
-        val clusters = driverSdk.data.clustersList
+        val clusters = driverSdk.data.clusters
 
         task_list_swipe_to_refresh.setOnRefreshListener {
             Log.i(TAG, "onRefresh called from SwipeRefreshLayout")
@@ -94,8 +97,9 @@ class TaskListFragment : AuthenticatedFragment() {
         rv_task_list.adapter = adapter
 
         val clustersAdapter = ClusterListAdapter(this, clusters, object : ClusterViewHolder.ClickListener {
-            override fun onClusterItemClick(cluster: ClusterArea) {
-                findNavController().navigate(TaskListFragmentDirections.actionTaskListToClusterFragment(cluster.wayPoints))
+            override fun onClusterItemClick(cluster: Cluster) {
+                clusterViewModel.onWaypointsChanged(cluster.wayPoints.toList())
+                findNavController().navigate(TaskListFragmentDirections.actionTaskListToClusterFragment())
             }
         })
         rv_cluster_list.adapter = clustersAdapter
