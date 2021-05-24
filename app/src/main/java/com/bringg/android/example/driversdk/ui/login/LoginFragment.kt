@@ -132,7 +132,7 @@ class LoginFragment : Fragment() {
 
     private fun showLoginFailed(result: DriverLoginResult) {
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, result.error!!.name(), Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, result.error!!.name, Toast.LENGTH_LONG).show()
         savedStateHandle.set(IS_LOGGED_IN, false)
     }
 
