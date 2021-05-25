@@ -97,7 +97,7 @@ class TaskListFragment : AuthenticatedFragment() {
 
     private fun initTaskListView() {
         val taskList = viewModel.data.taskList
-        val adapter = TaskListAdapter(object : ClickListener {
+        val adapter = TaskListAdapter(viewModel, viewLifecycleOwner, object : ClickListener {
             override fun onTaskItemClick(task: Task) {
                 findNavController().navigate(TaskListFragmentDirections.actionTaskListToTaskFragment(task.getId()))
             }
@@ -106,11 +106,10 @@ class TaskListFragment : AuthenticatedFragment() {
         initSelectionTracker(adapter)
         taskList.observe(viewLifecycleOwner) {
             Log.i(TAG, "task list update, tasks=$it")
+            binding.rvTaskList.forceLayout()
             binding.taskListSwipeToRefresh.isRefreshing = false
             binding.taskListFragmentEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-            taskSelectionTracker.clearSelection()
             adapter.submitList(it)
-            binding.rvTaskList.forceLayout()
         }
     }
 

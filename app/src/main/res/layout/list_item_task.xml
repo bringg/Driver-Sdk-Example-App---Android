@@ -7,9 +7,9 @@
     android:background="?attr/selectableItemBackground">
 
     <LinearLayout
-        android:background="@drawable/task_list_item_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/task_list_item_background"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -201,8 +201,21 @@
                     tools:text="Premium"
                     tools:visibility="visible" />
             </LinearLayout>
-        </RelativeLayout>
 
+            <TextView
+                android:id="@+id/task_extras_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/task_customer_name"
+                android:text="Task Extras:" />
+
+            <TextView
+                android:id="@+id/task_extras"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/task_extras_label" />
+
+        </RelativeLayout>
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

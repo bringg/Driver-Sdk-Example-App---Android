@@ -8,8 +8,10 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.widget.RecyclerView
+import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.databinding.ListItemTaskBinding
 import com.bringg.android.example.driversdk.util.AddressTypeUtil
@@ -18,6 +20,8 @@ import driver_sdk.util.TimeUtil
 
 class TaskViewHolder(
     private val binding: ListItemTaskBinding,
+    private val viewModel: BringgSdkViewModel,
+    private val lifecycleOwner: LifecycleOwner,
     clickListener: ClickListener
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -63,6 +67,9 @@ class TaskViewHolder(
         updateCustomerName(binding.taskCustomerName, task)
         updateAddressSecondLine(binding.taskAddressSecondLine, task)
         setAddressSecondLayoutVisibility()
+        viewModel.data.extras.taskExtras(task.getId()).observe(lifecycleOwner) {
+            binding.taskExtras.text = it?.toString(5) ?: "null"
+        }
     }
 
     private fun updateExternalId(externalIdView: TextView, externalId: String?) {

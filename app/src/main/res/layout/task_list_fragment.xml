@@ -13,28 +13,6 @@
         android:layout_height="match_parent"
         tools:context=".tasklist.TaskListFragment">
 
-        <com.skydoves.expandablelayout.ExpandableLayout
-            android:id="@+id/home_state_expandable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:expandable_parentLayout="@layout/home_state_title"
-            app:expandable_secondLayout="@layout/home_state_list"
-            app:expandable_spinner_gravity="start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.skydoves.expandablelayout.ExpandableLayout
-            android:id="@+id/clusters_expandable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:expandable_parentLayout="@layout/clusters_title"
-            app:expandable_secondLayout="@layout/cluster_list"
-            app:expandable_spinner_gravity="start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_state_expandable" />
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/task_list_swipe_to_refresh"
             android:layout_width="match_parent"
@@ -42,7 +20,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clusters_expandable">
+            app:layout_constraintTop_toBottomOf="@+id/task_list_top_barrier">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -70,6 +48,35 @@
             </FrameLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/home_state_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:expandable_parentLayout="@layout/home_state_title"
+            app:expandable_secondLayout="@layout/home_state_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/clusters_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:expandable_parentLayout="@layout/clusters_title"
+            app:expandable_secondLayout="@layout/cluster_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/home_state_expandable" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/task_list_top_barrier"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="clusters_expandable,home_state_expandable" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
