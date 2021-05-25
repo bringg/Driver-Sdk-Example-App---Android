@@ -1,7 +1,6 @@
 package com.bringg.android.example.driversdk.tasklist
 
 import android.Manifest
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,28 +8,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.PermissionChecker
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.Selection
 import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.SelectionTracker.Builder
 import androidx.recyclerview.selection.SelectionTracker.SelectionObserver
 import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.R.plurals
+import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
+import com.bringg.android.example.driversdk.clusters.ClusterListAdapter
+import com.bringg.android.example.driversdk.clusters.ClusterViewHolder
+import com.bringg.android.example.driversdk.clusters.ClusterViewModel
 import com.bringg.android.example.driversdk.databinding.TaskListFragmentBinding
 import com.bringg.android.example.driversdk.homelist.HomeListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskViewHolder.ClickListener
-import com.bringg.android.example.driversdk.ui.AuthenticatedFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.snackbar.Snackbar
-import driver_sdk.DriverSdkProvider
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.CreateGroupTaskResult
-import driver_sdk.driver.model.result.ShiftEndResult
-import driver_sdk.driver.model.result.ShiftStartResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
+import driver_sdk.models.Cluster
 import driver_sdk.models.Task
 import driver_sdk.tasks.TaskCancelResult
 
@@ -41,7 +43,9 @@ class TaskListFragment : AuthenticatedFragment() {
 
     private var _binding: TaskListFragmentBinding? = null
     private val binding get() = _binding!!
+    private val clusterViewModel: ClusterViewModel by activityViewModels()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var taskSelectionTracker: SelectionTracker<Long>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,41 +58,61 @@ class TaskListFragment : AuthenticatedFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeHomeStates()
-        observeTaskList()
+        initHomeStatesView()
+        initTaskListView()
+        initClustersView()
         initBottomSheet()
 
         binding.taskListSwipeToRefresh.setOnRefreshListener {
-            DriverSdkProvider.driverSdk().data.refreshTaskList()
+            viewModel.data.refreshTaskList()
         }
     }
 
-    private fun observeHomeStates() {
+    private fun initClustersView() = with(binding.clustersExpandable) {
+        setOnClickListener { toggleLayout() }
+        val adapter = ClusterListAdapter(object : ClusterViewHolder.ClickListener {
+            override fun onClusterItemClick(cluster: Cluster) {
+                clusterViewModel.onWaypointsChanged(cluster.wayPoints.toList())
+                findNavController().navigate(TaskListFragmentDirections.actionTaskListToClusterFragment())
+            }
+        })
+        secondLayout.findViewById<RecyclerView>(R.id.rv_cluster_list).adapter = adapter
+        viewModel.data.clusters.observe(viewLifecycleOwner) {
+            Log.i(TAG, "clusters updated, clusters=$it")
+            adapter.submitList(it)
+        }
+    }
+
+    private fun initHomeStatesView() = with(binding.homeStateExpandable) {
+        setOnClickListener { toggleLayout() }
         val homeListAdapter = HomeListAdapter()
-        binding.homeStateRecycler.adapter = homeListAdapter
-        DriverSdkProvider.driverSdk().data.homeMap.observe(viewLifecycleOwner) {
-            Log.i("homes changed", "home states:")
+        secondLayout.findViewById<RecyclerView>(R.id.home_state_recycler).adapter = homeListAdapter
+        viewModel.data.homeMap.observe(viewLifecycleOwner) {
+            Log.i(TAG, "home states changed, states=$it")
             homeListAdapter.submitList(it.toList())
         }
     }
 
-    private fun observeTaskList() {
-        val taskList = DriverSdkProvider.driverSdk().data.taskList
+    private fun initTaskListView() {
+        val taskList = viewModel.data.taskList
         val adapter = TaskListAdapter(object : ClickListener {
             override fun onTaskItemClick(task: Task) {
                 findNavController().navigate(TaskListFragmentDirections.actionTaskListToTaskFragment(task.getId()))
             }
         })
-        taskList.observe(viewLifecycleOwner) {
-            binding.taskListSwipeToRefresh.isRefreshing = false
-            adapter.submitList(it)
-        }
         binding.rvTaskList.adapter = adapter
         initSelectionTracker(adapter)
+        taskList.observe(viewLifecycleOwner) {
+            Log.i(TAG, "task list update, tasks=$it")
+            binding.taskListSwipeToRefresh.isRefreshing = false
+            binding.taskListFragmentEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            taskSelectionTracker.clearSelection()
+            adapter.submitList(it)
+        }
     }
 
     private fun initSelectionTracker(adapter: TaskListAdapter) = with(binding.rvTaskList) {
-        val tracker = Builder(
+        taskSelectionTracker = Builder(
             "taskListSelection",
             this,
             TaskItemKeyProvider(adapter),
@@ -97,50 +121,40 @@ class TaskListFragment : AuthenticatedFragment() {
         ).withSelectionPredicate(
             SelectionPredicates.createSelectAnything()
         ).build()
-        tracker.addObserver(
+        taskSelectionTracker.addObserver(
             object : SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     super.onSelectionChanged()
-                    onSelectedOrdersChanged(tracker.selection)
+                    onSelectedOrdersChanged(taskSelectionTracker.selection)
                 }
             })
-        adapter.tracker = tracker
+        adapter.tracker = taskSelectionTracker
     }
 
     private fun initBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.taskListFragmentBottomSheet.root)
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED)
-                    binding.homeStateCard.visibility = View.VISIBLE
-                else
-                    binding.homeStateCard.visibility = View.GONE
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
-        })
-        onSelectedOrdersChanged(MutableSelection())
         initShiftButton()
+        initLogoutButton()
+        onSelectedOrdersChanged(MutableSelection())
+    }
+
+    private fun initLogoutButton() = with(binding.taskListFragmentBottomSheet.taskListLogoutButton) {
+        setOnClickListener { viewModel.logout() }
     }
 
     private fun initShiftButton() = with(binding.taskListFragmentBottomSheet.taskListShiftStateButton) {
-        val driverSdk = DriverSdkProvider.driverSdk()
-        driverSdk.data.online.observe(viewLifecycleOwner, { isUserOnline ->
+        viewModel.data.online.observe(viewLifecycleOwner, { isUserOnline ->
             setText(if (isUserOnline) R.string.end_shift else R.string.start_shift)
             setOnClickListener {
+                taskSelectionTracker.clearSelection()
                 if (isUserOnline) {
-                    driverSdk.shift.endShift(object : ResultCallback<ShiftEndResult> {
-                        override fun onResult(result: ShiftEndResult) {
-                            if (result.success) {
-                                Log.i(TAG, "user is offline, DriverSdk stopped all background processes, DriverSdkProvider.driverSdk.data.online will post FALSE")
-                            } else {
-                                Log.i(TAG, "end shift request failed, error=${result.error}")
-                            }
-                        }
-                    })
+                    viewModel.endShift()
                 } else {
-                    startShift(context)
+                    if (PermissionChecker.checkSelfPermission(it.context, Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED) {
+                        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE)
+                        return@setOnClickListener
+                    }
+                    viewModel.startShift()
                 }
             }
         })
@@ -163,7 +177,8 @@ class TaskListFragment : AuthenticatedFragment() {
         text = resources.getQuantityString(plurals.cancel_task_button, selectedOrderIds.size(), selectedOrderIds.size())
         setOnClickListener {
             selectedOrderIds.forEach {
-                DriverSdkProvider.driverSdk().task.cancelTask(it, "reason to cancel", "custom reason", object : ResultCallback<TaskCancelResult> {
+                taskSelectionTracker.deselect(it)
+                viewModel.cancelTask(it, "reason to cancel", "custom reason", object : ResultCallback<TaskCancelResult> {
                     override fun onResult(result: TaskCancelResult) {
                         Log.i(TAG, "cancel result=$result")
                     }
@@ -178,7 +193,10 @@ class TaskListFragment : AuthenticatedFragment() {
         if (isEnabled) {
             val taskIds = selectedOrderIds.toList()
             setOnClickListener {
-                DriverSdkProvider.driverSdk().task.createGroup(taskIds).observe(viewLifecycleOwner) {
+                taskIds.forEach {
+                    taskSelectionTracker.deselect(it)
+                }
+                viewModel.createGroup(taskIds).observe(viewLifecycleOwner) {
                     Log.i(TAG, "got create group result for order ids=$taskIds, result=$it")
                     val text = when (it) {
                         is CreateGroupTaskResult.Success -> "Orders merged successfully, new order: ${it.task}"
@@ -191,14 +209,15 @@ class TaskListFragment : AuthenticatedFragment() {
     }
 
     private fun refreshUnGroupButton(selectedOrderIds: Selection<Long>) = with(binding.taskListFragmentBottomSheet.btnUngroupOrders) {
-        val groupedTasks = DriverSdkProvider.driverSdk().data.taskList.value?.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
+        val groupedTasks = viewModel.data.taskList.value?.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
         text = resources.getQuantityString(plurals.un_merge_orders_button, groupedTasks.size, groupedTasks.size)
         isEnabled = groupedTasks.isNotEmpty()
         if (isEnabled) {
             val taskIds = groupedTasks.map { it.getId() }.toList()
             setOnClickListener {
                 taskIds.forEach { taskId ->
-                    DriverSdkProvider.driverSdk().task.unGroup(taskId).observe(viewLifecycleOwner) {
+                    taskSelectionTracker.deselect(taskId)
+                    viewModel.unGroup(taskId).observe(viewLifecycleOwner) {
                         Log.i(TAG, "got ungroup result for order ids=$taskIds, result=$it")
                         val text = when (it) {
                             is UnGroupTaskResult.Success -> "Order unmerged successfully, new orders: ${it.tasks}"
@@ -211,26 +230,10 @@ class TaskListFragment : AuthenticatedFragment() {
         }
     }
 
-    private fun startShift(context: Context) {
-        if (PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PermissionChecker.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE)
-            return
-        }
-        DriverSdkProvider.driverSdk().shift.startShift(object : ResultCallback<ShiftStartResult> {
-            override fun onResult(result: ShiftStartResult) {
-                if (result.success) {
-                    Log.i(TAG, "user is online, DriverSdk is working in the background, DriverSdkProvider.driverSdk.data.online will post TRUE")
-                } else {
-                    Log.i(TAG, "start shift request failed, error=${result.error}")
-                }
-            }
-        })
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE == requestCode && grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
-            startShift(requireContext())
+            viewModel.startShift()
         }
     }
 }
