@@ -79,6 +79,8 @@ class TaskListFragment : AuthenticatedFragment() {
         secondLayout.findViewById<RecyclerView>(R.id.rv_cluster_list).adapter = adapter
         viewModel.data.clusters.observe(viewLifecycleOwner) {
             Log.i(TAG, "clusters updated, clusters=$it")
+            secondLayout.findViewById<View>(R.id.cluster_list_empty).visibility =
+                if (it.isEmpty()) View.VISIBLE else View.GONE
             adapter.submitList(it)
         }
     }
@@ -108,6 +110,7 @@ class TaskListFragment : AuthenticatedFragment() {
             binding.taskListFragmentEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             taskSelectionTracker.clearSelection()
             adapter.submitList(it)
+            binding.rvTaskList.forceLayout()
         }
     }
 
