@@ -1,6 +1,5 @@
 package com.bringg.android.example.driversdk.adminmessages
 
-import android.graphics.Typeface
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.databinding.ListItemAdminMessageBinding
@@ -14,9 +13,9 @@ class MessageViewHolder(
         adminMessageAuthor.text = message.author
         adminMessageText.text = message.message
         adminMessageTimestamp.text = message.time
-        adminMessageText.setTypeface(adminMessageText.typeface, if (message.wasRead()) Typeface.NORMAL else Typeface.BOLD)
         adminMessageDeleteBtn.setOnClickListener {
             bringgSdkViewModel.deleteMessage(message.id)
         }
+        bringgSdkViewModel.markMessageRead(message.id)
     }
 }

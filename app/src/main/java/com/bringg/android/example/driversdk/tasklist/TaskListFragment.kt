@@ -1,10 +1,12 @@
 package com.bringg.android.example.driversdk.tasklist
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.activityViewModels
@@ -18,6 +20,7 @@ import androidx.recyclerview.selection.SelectionTracker.SelectionObserver
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
+import com.bringg.android.example.driversdk.R.plurals
 import com.bringg.android.example.driversdk.adminmessages.AdminMessageAdapter
 import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
 import com.bringg.android.example.driversdk.clusters.ClusterListAdapter
@@ -29,6 +32,7 @@ import com.bringg.android.example.driversdk.tasklist.TaskViewHolder.ClickListene
 import com.bringg.android.example.driversdk.util.remeasure
 import com.bringg.android.example.driversdk.util.toggleExpandableLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.CreateGroupTaskResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
@@ -73,12 +77,17 @@ class TaskListFragment : AuthenticatedFragment() {
         val adapter = AdminMessageAdapter(viewModel)
         val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.adapter = adapter
-        setOnClickListener { toggleExpandableLayout(recyclerView) }
+        setOnClickListener { toggleExpandableLayout() }
         viewModel.adminMessages.observe(viewLifecycleOwner) { it ->
             Log.i(TAG, "admin messages updated, messages=$it")
             adapter.submitList(it.toList()) {
                 remeasure(recyclerView)
             }
+        }
+
+        viewModel.unreadAdminMessages.observe(viewLifecycleOwner) {
+            Log.i(TAG, "unread admin messages updated, messages=$it")
+            parentLayout.findViewById<TextView>(R.id.admin_message_unread_count).text = getString(R.string.title_unread_messages, it.size)
         }
     }
 
@@ -91,7 +100,7 @@ class TaskListFragment : AuthenticatedFragment() {
         })
         val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.adapter = adapter
-        setOnClickListener { toggleExpandableLayout(recyclerView) }
+        setOnClickListener { toggleExpandableLayout() }
         viewModel.data.clusters.observe(viewLifecycleOwner) {
             Log.i(TAG, "clusters updated, clusters=$it")
             adapter.submitList(it) {
@@ -104,7 +113,7 @@ class TaskListFragment : AuthenticatedFragment() {
         val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
         val adapter = HomeListAdapter()
         recyclerView.adapter = adapter
-        setOnClickListener { toggleExpandableLayout(recyclerView) }
+        setOnClickListener { toggleExpandableLayout() }
         viewModel.data.homeMap.observe(viewLifecycleOwner) {
             Log.i(TAG, "home states changed, states=$it")
             adapter.submitList(it.toList()) {
@@ -229,7 +238,7 @@ class TaskListFragment : AuthenticatedFragment() {
     }
 
     private fun refreshUnGroupButton(selectedOrderIds: Selection<Long>) = with(binding.taskListFragmentBottomSheet.btnUngroupOrders) {
-        val groupedTasks = viewModel.data.taskList.value.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
+        val groupedTasks = viewModel.data.taskList.value?.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
         text = resources.getQuantityString(plurals.un_merge_orders_button, groupedTasks.size, groupedTasks.size)
         isEnabled = groupedTasks.isNotEmpty()
         if (isEnabled) {
