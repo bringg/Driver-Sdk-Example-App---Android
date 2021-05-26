@@ -35,6 +35,8 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     private val TAG = "BringgSdkViewModel"
 
     val data = driverSdk.data
+    val adminMessages = driverSdk.adminMessages.messages
+    val unreadAdminMessages = driverSdk.adminMessages.unreadMessages
 
     //region authentication
     fun loginWithEmail(email: String, password: String, resultCallback: ResultCallback<DriverLoginResult>) {
@@ -217,6 +219,16 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
                     Log.i("CancelTask", "note result=$result")
                 }
             })
+    }
+    //endregion
+
+    //region admin messages
+    fun markMessageRead(messageId: Long) {
+        driverSdk.adminMessages.markRead(messageId)
+    }
+
+    fun deleteMessage(messageId: Long) {
+        driverSdk.adminMessages.delete(messageId)
     }
     //endregion
 }

@@ -1,6 +1,5 @@
 package com.bringg.android.example.driversdk.tasklist
 
-import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,7 +18,7 @@ import androidx.recyclerview.selection.SelectionTracker.SelectionObserver
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
-import com.bringg.android.example.driversdk.R.plurals
+import com.bringg.android.example.driversdk.adminmessages.AdminMessageAdapter
 import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
 import com.bringg.android.example.driversdk.clusters.ClusterListAdapter
 import com.bringg.android.example.driversdk.clusters.ClusterViewHolder
@@ -27,8 +26,9 @@ import com.bringg.android.example.driversdk.clusters.ClusterViewModel
 import com.bringg.android.example.driversdk.databinding.TaskListFragmentBinding
 import com.bringg.android.example.driversdk.homelist.HomeListAdapter
 import com.bringg.android.example.driversdk.tasklist.TaskViewHolder.ClickListener
+import com.bringg.android.example.driversdk.util.remeasure
+import com.bringg.android.example.driversdk.util.toggleExpandableLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.snackbar.Snackbar
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.CreateGroupTaskResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
@@ -58,9 +58,10 @@ class TaskListFragment : AuthenticatedFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initMessagesView()
         initHomeStatesView()
-        initTaskListView()
         initClustersView()
+        initTaskListView()
         initBottomSheet()
 
         binding.taskListSwipeToRefresh.setOnRefreshListener {
@@ -68,30 +69,47 @@ class TaskListFragment : AuthenticatedFragment() {
         }
     }
 
+    private fun initMessagesView() = with(binding.adminMessagesExpandable) {
+        val adapter = AdminMessageAdapter(viewModel)
+        val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView.adapter = adapter
+        setOnClickListener { toggleExpandableLayout(recyclerView) }
+        viewModel.adminMessages.observe(viewLifecycleOwner) { it ->
+            Log.i(TAG, "admin messages updated, messages=$it")
+            adapter.submitList(it.toList()) {
+                remeasure(recyclerView)
+            }
+        }
+    }
+
     private fun initClustersView() = with(binding.clustersExpandable) {
-        setOnClickListener { toggleLayout() }
         val adapter = ClusterListAdapter(object : ClusterViewHolder.ClickListener {
             override fun onClusterItemClick(cluster: Cluster) {
                 clusterViewModel.onWaypointsChanged(cluster.wayPoints.toList())
                 findNavController().navigate(TaskListFragmentDirections.actionTaskListToClusterFragment())
             }
         })
-        secondLayout.findViewById<RecyclerView>(R.id.rv_cluster_list).adapter = adapter
+        val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView.adapter = adapter
+        setOnClickListener { toggleExpandableLayout(recyclerView) }
         viewModel.data.clusters.observe(viewLifecycleOwner) {
             Log.i(TAG, "clusters updated, clusters=$it")
-            secondLayout.findViewById<View>(R.id.cluster_list_empty).visibility =
-                if (it.isEmpty()) View.VISIBLE else View.GONE
-            adapter.submitList(it)
+            adapter.submitList(it) {
+                remeasure(recyclerView)
+            }
         }
     }
 
     private fun initHomeStatesView() = with(binding.homeStateExpandable) {
-        setOnClickListener { toggleLayout() }
-        val homeListAdapter = HomeListAdapter()
-        secondLayout.findViewById<RecyclerView>(R.id.home_state_recycler).adapter = homeListAdapter
+        val recyclerView = secondLayout.findViewById<RecyclerView>(R.id.recycler_view)
+        val adapter = HomeListAdapter()
+        recyclerView.adapter = adapter
+        setOnClickListener { toggleExpandableLayout(recyclerView) }
         viewModel.data.homeMap.observe(viewLifecycleOwner) {
             Log.i(TAG, "home states changed, states=$it")
-            homeListAdapter.submitList(it.toList())
+            adapter.submitList(it.toList()) {
+                remeasure(recyclerView)
+            }
         }
     }
 
@@ -211,7 +229,7 @@ class TaskListFragment : AuthenticatedFragment() {
     }
 
     private fun refreshUnGroupButton(selectedOrderIds: Selection<Long>) = with(binding.taskListFragmentBottomSheet.btnUngroupOrders) {
-        val groupedTasks = viewModel.data.taskList.value?.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
+        val groupedTasks = viewModel.data.taskList.value.filter { selectedOrderIds.contains(it.getId()) && it.groupUUID.isNotEmpty() } ?: emptyList()
         text = resources.getQuantityString(plurals.un_merge_orders_button, groupedTasks.size, groupedTasks.size)
         isEnabled = groupedTasks.isNotEmpty()
         if (isEnabled) {

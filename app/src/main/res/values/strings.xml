@@ -110,6 +110,7 @@
 
     <string name="mandatory_actions_not_taken_title">"Following actions must be completed:"</string>
     <string name="label_task_actions">Task Actions</string>
+    <string name="title_unread_messages">%d Unread messages</string>
 
     <plurals name="merge_orders_button">
         <item quantity="zero">Merge Orders</item>

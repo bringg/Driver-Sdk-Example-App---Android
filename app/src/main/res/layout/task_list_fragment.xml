@@ -50,6 +50,17 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/admin_messages_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:expandable_parentLayout="@layout/admin_messages_title"
+            app:expandable_secondLayout="@layout/admin_messages_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.skydoves.expandablelayout.ExpandableLayout
             android:id="@+id/home_state_expandable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +69,7 @@
             app:expandable_spinner_gravity="start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/admin_messages_expandable" />
 
         <com.skydoves.expandablelayout.ExpandableLayout
             android:id="@+id/clusters_expandable"
@@ -76,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="clusters_expandable,home_state_expandable" />
+            app:constraint_referenced_ids="clusters_expandable,home_state_expandable,admin_messages_expandable" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
