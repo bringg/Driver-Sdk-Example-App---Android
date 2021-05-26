@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
+import com.bringg.android.example.driversdk.task.ui.view.WaypointView
 
 class WaypointFragment : AuthenticatedFragment() {
 
@@ -25,6 +26,19 @@ class WaypointFragment : AuthenticatedFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val waypointId = requireArguments().getLong("waypoint_id")
-        viewModel.data.waypoint(waypointId).observe(viewLifecycleOwner, WaypointViewObserver(viewModel, waypointId, view, findNavController()))
+        val waypointView = view.findViewById<WaypointView>(R.id.waypoint_view)
+        val waypointNextActionButtonObserver = WaypointViewObserver(viewModel, waypointId, view, findNavController())
+        viewModel.data.waypoint(waypointId).observe(viewLifecycleOwner) { waypoint ->
+            if (waypoint == null) {
+                waypointView.refresh(null, null, waypointNextActionButtonObserver)
+            } else {
+                val task = viewModel.data.task(waypoint.taskId).value
+                waypointView.refresh(task, waypoint, waypointNextActionButtonObserver)
+            }
+            waypointNextActionButtonObserver.onChanged(waypoint)
+        }
+        viewModel.data.extras.waypointExtras(waypointId).observe(viewLifecycleOwner) {
+            waypointView.setExtras(it)
+        }
     }
 }

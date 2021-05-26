@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.task.ui.view.InventoryListPresenter
-import com.bringg.android.example.driversdk.task.ui.view.WaypointView
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.Inventory
@@ -19,18 +18,15 @@ class WaypointViewObserver(private val viewModel: BringgSdkViewModel, private va
     private val TAG = "WaypointViewObserver"
     private val btnNextAction = view.findViewById<TextView>(R.id.btn_waypoint_progress)
     private val btnReject = view.findViewById<TextView>(R.id.btn_waypoint_reject)
-    private val waypointView = view.findViewById<WaypointView>(R.id.waypoint_view)
 
     override fun onChanged(waypoint: Waypoint?) {
         btnReject.visibility = View.GONE
         if (waypoint == null) {
-            waypointView.refresh(null, null, this)
             btnNextAction.isEnabled = true
             btnNextAction.text = "This waypoint was removed"
             btnNextAction.setOnClickListener { navController.navigateUp() }
         } else {
             val task = viewModel.data.task(waypoint.taskId).value
-            waypointView.refresh(task, waypoint, this)
             if (waypoint.isDone) {
                 btnNextAction.isEnabled = true
                 btnNextAction.text = "Done"

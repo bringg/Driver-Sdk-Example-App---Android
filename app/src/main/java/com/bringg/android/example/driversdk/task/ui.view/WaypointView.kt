@@ -16,6 +16,7 @@ import java.util.Locale
 import kotlinx.android.synthetic.main.fragment_waypoint_list_header.view.*
 import kotlinx.android.synthetic.main.layout_way_point_title.view.*
 import kotlinx.android.synthetic.main.waypoint_time_window_layout.view.*
+import org.json.JSONObject
 
 class WaypointView : CardView {
     private val pricingFormat = "%.2f"
@@ -143,6 +144,10 @@ class WaypointView : CardView {
         tv_total_to_be_paid_value.text = pricingFormat.format(task.leftToBePaid)
         tv_amount_paid_label.text = "Amount paid (${task.paymentMethod})"
         tv_amount_paid_value.text = pricingFormat.format(task.paidAmount)
+    }
+
+    fun setExtras(extras: JSONObject?) {
+        tv_total_extras.text = extras?.toString(5) ?: "null"
     }
 
     companion object {
