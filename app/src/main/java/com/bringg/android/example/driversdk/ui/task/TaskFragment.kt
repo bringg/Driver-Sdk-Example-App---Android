@@ -91,12 +91,8 @@ class TaskFragment : AuthenticatedFragment() {
     private fun showTaskActionsDialog() {
         val currWayPointId = driverSdk.data.task(args.taskId).value?.currentWayPointId
         if (currWayPointId != null) {
-            val mandatoryActions = driverSdk.data.waypoint(currWayPointId).value?.remainingMandatoryActions // TODO
-            val actionsArray = mandatoryActions?.toTypedArray() ?: arrayOf<TaskActionItem>()
             findNavController().navigate(
-                TaskFragmentDirections.actionTaskFragmentToDialogActions(
-                    actionsArray
-                )
+                TaskFragmentDirections.actionTaskFragmentToDialogActions(args.taskId, currWayPointId)
             )
         }
     }

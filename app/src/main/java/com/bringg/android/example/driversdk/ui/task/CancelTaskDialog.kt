@@ -54,7 +54,7 @@ class CancelTaskDialog : DialogFragment() {
     }
 
     private fun handleMandatoryCancelTaskActions(actions: Collection<TaskActionItem>) {
-        val actionData = DriverActionData.Builder(actions.first()).taskId(args.taskId).build()
+        val actionData = DriverActionData.Builder().taskId(args.taskId).build()
         DriverSdkProvider.driverSdk().actions.submitNote(actionData, "this is my note",
             object : ResultCallback<NoteResult> {
                 override fun onResult(result: NoteResult) {
