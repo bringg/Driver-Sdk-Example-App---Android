@@ -11,7 +11,8 @@ import com.bringg.android.example.driversdk.util.TaskStatusMap
 import com.bumptech.glide.Glide
 import driver_sdk.models.Task
 import driver_sdk.models.Waypoint
-import driver_sdk.util.TimeUtil
+import java.sql.Date
+import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.android.synthetic.main.fragment_waypoint_list_header.view.*
 import kotlinx.android.synthetic.main.layout_way_point_title.view.*
@@ -57,40 +58,39 @@ class WaypointView : CardView {
     }
 
     private fun updateTimeWindowDetails(waypoint: Waypoint) {
-        if (waypoint.scheduledAt.isNullOrBlank()) {
+        val dateFormat = SimpleDateFormat.getDateTimeInstance()
+        if (waypoint.scheduledTime == 0L) {
             scheduled_for_text.visibility = View.GONE
             scheduled_for_title.visibility = View.GONE
         } else {
             scheduled_for_text.visibility = View.VISIBLE
             scheduled_for_title.visibility = View.VISIBLE
-            scheduled_for_text.text = getLocalDateString(waypoint.scheduledAt)
+            scheduled_for_text.text = dateFormat.format(Date(waypoint.scheduledTime))
         }
 
-        if (waypoint.noEarlierThan.isNullOrBlank() && waypoint.noLaterThan.isNullOrBlank()) {
+        if (waypoint.timeWindowStart == 0L && waypoint.timeWindowEnd == 0L) {
             time_window_title.visibility = View.GONE
         } else {
             time_window_title.visibility = View.VISIBLE
-            if (waypoint.noEarlierThan.isNullOrBlank()) {
+            if (waypoint.timeWindowStart == 0L) {
                 time_window_start.visibility = View.GONE
             } else {
                 time_window_start.visibility = View.VISIBLE
-                time_window_start.text = getLocalDateString(waypoint.noEarlierThan)
+                time_window_start.text = dateFormat.format(Date(waypoint.timeWindowStart))
             }
-            if (waypoint.noLaterThan.isNullOrBlank()) {
+            if (waypoint.timeWindowEnd == 0L) {
                 time_window_end.visibility = View.GONE
             } else {
                 time_window_end.visibility = View.VISIBLE
-                time_window_end.text = getLocalDateString(waypoint.noLaterThan)
+                time_window_end.text = dateFormat.format(Date(waypoint.timeWindowEnd))
             }
         }
 
-        eta_text.text = if (waypoint.eta.isNullOrBlank()) "Start the order to calculate ETA" else getLocalDateString(waypoint.eta)
-        wp_started_at_text.text = if (waypoint.startedTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.startedTime)
-        wp_checkin_at_text.text = if (waypoint.checkinTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.checkinTime)
-        wp_checkout_text.text = if (waypoint.checkoutTime == 0L) "" else TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(waypoint.checkoutTime)
+        eta_text.text = if (waypoint.etaTime == 0L) "Start the order to calculate ETA" else dateFormat.format(Date(waypoint.etaTime))
+        wp_started_at_text.text = if (waypoint.startedTime == 0L) "" else dateFormat.format(Date(waypoint.scheduledTime))
+        wp_checkin_at_text.text = if (waypoint.checkinTime == 0L) "" else dateFormat.format(Date(waypoint.checkinTime))
+        wp_checkout_text.text = if (waypoint.checkoutTime == 0L) "" else dateFormat.format(Date(waypoint.checkoutTime))
     }
-
-    private fun getLocalDateString(dateString: String) = TimeUtil.formatShortMonthNumericDayAndYearLocalizedTime(TimeUtil.getTimeFromServerDateString(dateString) - TimeUtil.getTimeZoneDifferenceInMillis())
 
     fun refresh(task: Task?, waypoint: Waypoint?, inventoryListPresenter: InventoryListPresenter) {
         if (task == null || waypoint == null) {

@@ -21,6 +21,7 @@ import driver_sdk.driver.model.result.TaskStartResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
+import driver_sdk.models.WayPointUpdatedDataFromApp
 import driver_sdk.models.configuration.TaskActionItem
 import driver_sdk.tasks.TaskCancelResult
 
@@ -35,8 +36,6 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     private val TAG = "BringgSdkViewModel"
 
     val data = driverSdk.data
-    val adminMessages = driverSdk.adminMessages.messages
-    val unreadAdminMessages = driverSdk.adminMessages.unreadMessages
 
     //region authentication
     fun loginWithEmail(email: String, password: String, resultCallback: ResultCallback<DriverLoginResult>) {
@@ -197,6 +196,10 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     fun unGroup(taskId: Long): LiveData<UnGroupTaskResult> {
         return driverSdk.task.unGroup(taskId)
     }
+
+    fun updateWaypoint(update: WayPointUpdatedDataFromApp) {
+        driverSdk.task.updateWaypoint(update)
+    }
     //endregion
 
     // region note actions
@@ -223,6 +226,9 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     //endregion
 
     //region admin messages
+    val adminMessages = driverSdk.adminMessages.messages
+    val unreadAdminMessages = driverSdk.adminMessages.unreadMessages
+
     fun markMessageRead(messageId: Long) {
         driverSdk.adminMessages.markRead(messageId)
     }

@@ -2,6 +2,9 @@ package com.bringg.android.example.driversdk.task
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
@@ -19,6 +22,24 @@ class WaypointFragment : AuthenticatedFragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    init {
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.waypoint_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.edit_waypoint) {
+            val args = requireArguments()
+            findNavController().navigate(TaskFragmentDirections.actionTaskFragmentToEditWaypointFragment(args.getLong("task_id"), args.getLong("waypoint_id")))
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = inflater.inflate(R.layout.waypoint_fragment, container, false)!!

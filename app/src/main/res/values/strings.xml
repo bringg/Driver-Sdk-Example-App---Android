@@ -90,6 +90,22 @@
     <string name="pickup_area">"Pickup Area"</string>
     <string name="dropoff_area">"Dropoff Area"</string>
 
+    <string name="edit_task_hint_address">"Address"</string>
+    <string name="edit_task_hint_address_second_line">"Second Address Line"</string>
+    <string name="edit_task_hint_customer_email">"Customer Email Address"</string>
+    <string name="edit_task_hint_customer_id">"Customer ID"</string>
+    <string name="edit_task_hint_customer_name">"Customer Name"</string>
+    <string name="edit_task_hint_customer_phone">"Customer Phone Number"</string>
+    <string name="edit_task_hint_end_time_window">"Promised Window End Time"</string>
+    <string name="edit_task_hint_external_id">"External ID"</string>
+    <string name="edit_task_hint_scan_code">"Scan Code"</string>
+    <string name="edit_task_hint_scheduled_date">"Scheduled Date"</string>
+    <string name="edit_task_hint_scheduled_time">"Scheduled Time"</string>
+    <string name="edit_task_hint_service_plan">"Service plan"</string>
+    <string name="edit_task_hint_start_time_window">"Promised Window Start Time"</string>
+    <string name="edit_task_hint_title">"Title"</string>
+    <string name="edit_task_hint_zipcode">"ZipCode"</string>
+
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -111,6 +127,7 @@
     <string name="mandatory_actions_not_taken_title">"Following actions must be completed:"</string>
     <string name="label_task_actions">Task Actions</string>
     <string name="title_unread_messages">%d Unread messages</string>
+    <string name="edit_waypoint">Edit Waypoint</string>
 
     <plurals name="merge_orders_button">
         <item quantity="zero">Merge Orders</item>

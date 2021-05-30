@@ -27,8 +27,7 @@
         android:id="@+id/cluster_fragment"
         android:name="com.bringg.android.example.driversdk.clusters.ClusterFragment"
         android:label="@string/order_description"
-        tools:layout="@layout/fragment_cluster">
-    </fragment>
+        tools:layout="@layout/fragment_cluster"></fragment>
     <navigation
         android:id="@+id/nav_graph_login"
         app:popUpTo="@id/login_merchant_selection"
@@ -83,12 +82,27 @@
             <argument
                 android:name="task_id"
                 app:argType="long" />
+            <action
+                android:id="@+id/action_task_fragment_to_edit_waypoint_fragment"
+                app:destination="@id/edit_waypoint_fragment" />
         </fragment>
         <fragment
             android:id="@+id/inventory_fragment"
             android:name="com.bringg.android.example.driversdk.inventory.InventoryListFragment"
             android:label="@string/order_inventory"
             tools:layout="@layout/fragment_inventory_list">
+            <argument
+                android:name="waypoint_id"
+                app:argType="long" />
+        </fragment>
+        <fragment
+            android:id="@+id/edit_waypoint_fragment"
+            android:name="com.bringg.android.example.driversdk.task.EditWaypointFragment"
+            android:label="@string/edit_waypoint"
+            tools:layout="@layout/fragment_edit_waypoint">
+            <argument
+                android:name="task_id"
+                app:argType="long" />
             <argument
                 android:name="waypoint_id"
                 app:argType="long" />

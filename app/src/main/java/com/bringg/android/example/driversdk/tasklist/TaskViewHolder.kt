@@ -17,6 +17,8 @@ import com.bringg.android.example.driversdk.databinding.ListItemTaskBinding
 import com.bringg.android.example.driversdk.util.AddressTypeUtil
 import driver_sdk.models.Task
 import driver_sdk.util.TimeUtil
+import java.sql.Date
+import java.text.SimpleDateFormat
 
 class TaskViewHolder(
     private val binding: ListItemTaskBinding,
@@ -24,6 +26,8 @@ class TaskViewHolder(
     private val lifecycleOwner: LifecycleOwner,
     clickListener: ClickListener
 ) : RecyclerView.ViewHolder(binding.root) {
+
+    private val dateFormat = SimpleDateFormat.getDateTimeInstance()
 
     interface ClickListener {
         fun onTaskItemClick(task: Task)
@@ -101,8 +105,8 @@ class TaskViewHolder(
         }
         if (waypoint != null) {
             if (waypoint.hasTimeWindow()) {
-                val noEarlierThan = waypoint.noEarlierThan
-                val noLaterThan = waypoint.noLaterThan
+                val noEarlierThan = dateFormat.format(Date(waypoint.timeWindowStart))
+                val noLaterThan = dateFormat.format(Date(waypoint.timeWindowEnd))
                 val timeWindowText = "$noEarlierThan - $noLaterThan"
                 binding.timeWindow.text = timeWindowText
                 timeWindowVisibility = View.VISIBLE

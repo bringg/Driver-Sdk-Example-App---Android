@@ -133,7 +133,6 @@ class TaskListFragment : AuthenticatedFragment() {
         initSelectionTracker(adapter)
         taskList.observe(viewLifecycleOwner) {
             Log.i(TAG, "task list update, tasks=$it")
-            binding.rvTaskList.forceLayout()
             binding.taskListSwipeToRefresh.isRefreshing = false
             binding.taskListFragmentEmpty.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             adapter.submitList(it)
