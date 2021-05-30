@@ -110,8 +110,5 @@
 
     <string name="mandatory_actions_not_taken_title">"Following actions must be completed:"</string>
     <string name="label_task_actions">Task Actions</string>
-    <string name="label_add_note">Add Note</string>
-    <string name="label_add_image">Add Image</string>
-    <string name="label_add_form">Add Form</string>
 
 </resources>

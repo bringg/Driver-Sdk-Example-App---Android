@@ -100,15 +100,6 @@
                 app:argType="long" />
         </fragment>
         <dialog
-            android:id="@+id/dialog_cancel_task"
-            android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
-            android:label="@string/cancel_task"
-            tools:layout="@layout/fragment_cancel_task_reason_selection">
-            <argument
-                android:name="task_id"
-                app:argType="long" />
-        </dialog>
-        <dialog
             android:id="@+id/dialog_actions"
             android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
             android:label="@string/label_task_actions"
@@ -118,6 +109,15 @@
                 app:argType="long" />
             <argument
                 android:name="waypoint_id"
+                app:argType="long" />
+        </dialog>
+        <dialog
+            android:id="@+id/dialog_cancel_task"
+            android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
+            android:label="@string/cancel_task"
+            tools:layout="@layout/fragment_cancel_task_reason_selection">
+            <argument
+                android:name="task_id"
                 app:argType="long" />
         </dialog>
     </navigation>
