@@ -13,26 +13,21 @@
 
     <fragment
         android:id="@+id/task_list_fragment"
-        android:name="com.bringg.android.example.driversdk.ui.taskList.TaskListFragment"
+        android:name="com.bringg.android.example.driversdk.tasklist.TaskListFragment"
         android:label="@string/task_list"
         tools:layout="@layout/task_list_fragment">
         <action
             android:id="@+id/action_task_list_to_task_fragment"
-            app:destination="@id/nav_graph_task"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/nav_graph_task" />
         <action
             android:id="@+id/action_task_list_to_cluster_fragment"
-            app:destination="@id/cluster_fragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:destination="@id/cluster_fragment" />
     </fragment>
     <fragment
         android:id="@+id/cluster_fragment"
-        android:name="com.bringg.android.example.driversdk.ui.cluster.ClusterFragment"
+        android:name="com.bringg.android.example.driversdk.clusters.ClusterFragment"
         android:label="@string/order_description"
-        tools:layout="@layout/fragment_cluster">
-    </fragment>
+        tools:layout="@layout/fragment_cluster"></fragment>
     <navigation
         android:id="@+id/nav_graph_login"
         app:popUpTo="@id/login_merchant_selection"
@@ -40,7 +35,7 @@
         app:startDestination="@id/login_fragment">
         <fragment
             android:id="@+id/login_fragment"
-            android:name="com.bringg.android.example.driversdk.ui.login.LoginFragment"
+            android:name="com.bringg.android.example.driversdk.authentication.LoginFragment"
             android:label="@string/login"
             tools:layout="@layout/fragment_login">
             <action
@@ -52,7 +47,7 @@
         </fragment>
         <dialog
             android:id="@+id/login_merchant_selection"
-            android:name="com.bringg.android.example.driversdk.ui.login.LoginMerchantSelectionFragment"
+            android:name="com.bringg.android.example.driversdk.authentication.LoginMerchantSelectionFragment"
             android:label="@string/login_merchant_selection"
             tools:layout="@layout/fragment_login_merchant_selection">
             <action
@@ -72,14 +67,12 @@
             app:argType="long" />
         <fragment
             android:id="@+id/task_fragment"
-            android:name="com.bringg.android.example.driversdk.ui.task.TaskFragment"
+            android:name="com.bringg.android.example.driversdk.task.TaskFragment"
             android:label="@string/order_description"
             tools:layout="@layout/task_fragment">
             <action
                 android:id="@+id/action_task_fragment_to_inventory_fragment"
-                app:destination="@id/inventory_fragment"
-                app:enterAnim="@anim/fragment_fade_enter"
-                app:exitAnim="@anim/fragment_fade_exit" />
+                app:destination="@id/inventory_fragment" />
             <action
                 android:id="@+id/action_task_fragment_to_dialog_cancel_task"
                 app:destination="@id/dialog_cancel_task" />
@@ -89,19 +82,34 @@
             <argument
                 android:name="task_id"
                 app:argType="long" />
+            <action
+                android:id="@+id/action_task_fragment_to_edit_waypoint_fragment"
+                app:destination="@id/edit_waypoint_fragment" />
         </fragment>
         <fragment
             android:id="@+id/inventory_fragment"
-            android:name="com.bringg.android.example.driversdk.ui.inventory.InventoryListFragment"
+            android:name="com.bringg.android.example.driversdk.inventory.InventoryListFragment"
             android:label="@string/order_inventory"
             tools:layout="@layout/fragment_inventory_list">
             <argument
                 android:name="waypoint_id"
                 app:argType="long" />
         </fragment>
+        <fragment
+            android:id="@+id/edit_waypoint_fragment"
+            android:name="com.bringg.android.example.driversdk.task.EditWaypointFragment"
+            android:label="@string/edit_waypoint"
+            tools:layout="@layout/fragment_edit_waypoint">
+            <argument
+                android:name="task_id"
+                app:argType="long" />
+            <argument
+                android:name="waypoint_id"
+                app:argType="long" />
+        </fragment>
         <dialog
             android:id="@+id/dialog_actions"
-            android:name="com.bringg.android.example.driversdk.ui.task.ActionsDialog"
+            android:name="com.bringg.android.example.driversdk.task.ActionsDialog"
             android:label="@string/label_task_actions"
             tools:layout="@layout/fragment_task_actions_dialog">
             <argument
@@ -113,7 +121,7 @@
         </dialog>
         <dialog
             android:id="@+id/dialog_cancel_task"
-            android:name="com.bringg.android.example.driversdk.ui.task.CancelTaskDialog"
+            android:name="com.bringg.android.example.driversdk.task.CancelTaskDialog"
             android:label="@string/cancel_task"
             tools:layout="@layout/fragment_cancel_task_reason_selection">
             <argument

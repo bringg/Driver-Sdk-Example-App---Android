@@ -8,17 +8,26 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.widget.RecyclerView
+import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
+import com.bringg.android.example.driversdk.databinding.ListItemTaskBinding
 import com.bringg.android.example.driversdk.util.AddressTypeUtil
 import driver_sdk.models.Task
 import driver_sdk.util.TimeUtil
+import java.sql.Date
+import java.text.SimpleDateFormat
 
 class TaskViewHolder(
-    itemView: View,
+    private val binding: ListItemTaskBinding,
+    private val viewModel: BringgSdkViewModel,
+    private val lifecycleOwner: LifecycleOwner,
     clickListener: ClickListener
-) : RecyclerView.ViewHolder(itemView) {
+) : RecyclerView.ViewHolder(binding.root) {
+
+    private val dateFormat = SimpleDateFormat.getDateTimeInstance()
 
     interface ClickListener {
         fun onTaskItemClick(task: Task)
@@ -26,46 +35,19 @@ class TaskViewHolder(
 
     private val TAG = "TaskViewHolder"
 
-    private val typeLabelSecond: TextView
-    private val servicePlanLabel: TextView
-    private val statusLabel: TextView
-    private val timeWindow: TextView
-    private val status: View
-    private val externalId: TextView
-    private val customerName: TextView
-    private val title: TextView
-    private val typeLabel: TextView
-    private val address: TextView
-    private val due: TextView
-    private val addressSecondLine: TextView
-    private val customerAddressName: TextView
-    private val customerAddressType: TextView
-    private val lateIndication: View
-    private val customerAddressSecondLayout: View
-
     init {
-        val view = itemView
         itemView.setOnClickListener { clickListener.onTaskItemClick(it.tag as Task) }
-        due = view.findViewById(R.id.task_time)
-        lateIndication = view.findViewById(R.id.task_late_indication)
-        address = view.findViewById(R.id.task_address)
-        addressSecondLine = view.findViewById(R.id.task_address_second_line)
-        title = view.findViewById(R.id.task_description)
-        status = view.findViewById(R.id.task_status_indication)
-        statusLabel = view.findViewById(R.id.task_special_status_label)
-        typeLabel = view.findViewById(R.id.task_special_status_second_label)
-        typeLabelSecond = view.findViewById(R.id.task_special_status_third_label)
-        servicePlanLabel = view.findViewById(R.id.task_service_plan_label)
-        timeWindow = view.findViewById(R.id.time_window)
-        externalId = view.findViewById(R.id.task_external_id)
-        customerName = view.findViewById(R.id.task_customer_name)
-        customerAddressName = view.findViewById(R.id.customer_address_name)
-        customerAddressType = view.findViewById(R.id.customer_address_type)
-        customerAddressSecondLayout = view.findViewById(R.id.task_address_second_layout)
     }
 
-    fun bind(task: Task) {
+    fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+        object : ItemDetailsLookup.ItemDetails<Long>() {
+            override fun getPosition(): Int = adapterPosition
+            override fun getSelectionKey(): Long = (itemView.tag as Task?)?.getId() ?: -1
+        }
+
+    fun bind(task: Task, selected: Boolean) {
         itemView.tag = task
+        itemView.isActivated = selected
 
         val isStarted = task.isStarted
         itemView.isSelected = isStarted
@@ -73,22 +55,25 @@ class TaskViewHolder(
         // show task late indication
         refreshLateIndication(task)
         // set the title, address and scheduled_at
-        title.text = task.title
+        binding.taskDescription.text = task.title
         setAddress(task)
         setCustomerAddress(task)
 
         // show task status indication
         if (task.isStarted) {
-            status.visibility = View.VISIBLE
+            binding.taskSpecialStatusLabel.visibility = View.VISIBLE
         } else {
-            status.visibility = View.INVISIBLE
+            binding.taskSpecialStatusLabel.visibility = View.INVISIBLE
         }
         updateLabels(task)
         updateTimeWindow(task)
-        updateExternalId(externalId, task.externalId)
-        updateCustomerName(customerName, task)
-        updateAddressSecondLine(addressSecondLine, task)
+        updateExternalId(binding.taskExternalId, task.externalId)
+        updateCustomerName(binding.taskCustomerName, task)
+        updateAddressSecondLine(binding.taskAddressSecondLine, task)
         setAddressSecondLayoutVisibility()
+        viewModel.data.extras.taskExtras(task.getId()).observe(lifecycleOwner) {
+            binding.taskExtras.text = it?.toString(5) ?: "null"
+        }
     }
 
     private fun updateExternalId(externalIdView: TextView, externalId: String?) {
@@ -120,10 +105,10 @@ class TaskViewHolder(
         }
         if (waypoint != null) {
             if (waypoint.hasTimeWindow()) {
-                val noEarlierThan = waypoint.noEarlierThan
-                val noLaterThan = waypoint.noLaterThan
-                val timeWindowText: String = "$noEarlierThan - $noLaterThan"
-                timeWindow.text = timeWindowText
+                val noEarlierThan = dateFormat.format(Date(waypoint.timeWindowStart))
+                val noLaterThan = dateFormat.format(Date(waypoint.timeWindowEnd))
+                val timeWindowText = "$noEarlierThan - $noLaterThan"
+                binding.timeWindow.text = timeWindowText
                 timeWindowVisibility = View.VISIBLE
             } else {
                 timeWindowVisibility = View.GONE
@@ -132,7 +117,7 @@ class TaskViewHolder(
             Log.e(TAG, "failed to update time window - waypoint is null, task_id: " + task.getId())
             timeWindowVisibility = View.GONE
         }
-        timeWindow.visibility = timeWindowVisibility
+        binding.timeWindow.visibility = timeWindowVisibility
     }
 
     private fun updateLabels(task: Task) {
@@ -143,21 +128,27 @@ class TaskViewHolder(
     }
 
     private fun updateLabelStatus(task: Task) {
-        if (task.isAssignedAndNotAccepted) {
-            statusLabel.visibility = View.VISIBLE
-            statusLabel.setBackgroundResource(R.drawable.task_list_item_unaccepted_bg)
-            statusLabel.setText(R.string.unaccepted_task)
-        } else if (task.isFree) {
-            statusLabel.visibility = View.VISIBLE
-            statusLabel.setBackgroundResource(R.drawable.task_list_item_grab_bg)
-            statusLabel.setText(R.string.button_grab)
-            // can set here the onClick listener for the grab if we want to make him into button instead of icon
-        } else statusLabel.visibility = View.GONE
+        with(binding.taskSpecialStatusLabel) {
+            when {
+                task.isAssignedAndNotAccepted -> {
+                    visibility = View.VISIBLE
+                    setBackgroundResource(R.drawable.task_list_item_unaccepted_bg)
+                    setText(R.string.unaccepted_task)
+                }
+                task.isFree -> {
+                    visibility = View.VISIBLE
+                    setBackgroundResource(R.drawable.task_list_item_grab_bg)
+                    setText(R.string.button_grab)
+                    // can set here the onClick listener for the grab if we want to make him into button instead of icon
+                }
+                else -> visibility = View.GONE
+            }
+        }
     }
 
     private fun updateLabelTaskType(task: Task) {
         if (task.taskTypeId == null) {
-            typeLabel.visibility = View.GONE
+            binding.taskSpecialStatusSecondLabel.visibility = View.GONE
             return
         }
         var labelVisibility = View.GONE
@@ -189,68 +180,80 @@ class TaskViewHolder(
                 }
             }
         }
-        typeLabel.visibility = labelVisibility
-        if (labelStringResource != 0) {
-            typeLabel.setText(labelStringResource)
-        } else {
-            typeLabel.text = null
-        }
-        if (labelBackgroundResource != 0) {
-            typeLabel.setBackgroundResource(labelBackgroundResource)
-        } else {
-            ViewCompat.setBackground(typeLabel, null)
+        with(binding.taskSpecialStatusSecondLabel) {
+            visibility = labelVisibility
+            if (labelStringResource != 0) {
+                setText(labelStringResource)
+            } else {
+                text = null
+            }
+            if (labelBackgroundResource != 0) {
+                setBackgroundResource(labelBackgroundResource)
+            } else {
+                background = null
+            }
         }
     }
 
     private fun updateLabelSecondTaskType(task: Task) {
         val isPickupAndDropOffTask = task.taskTypeId != null && task.taskTypeId == Task.TASK_TYPE_ID_PICKUP_AND_DROP_OFF
-        if (isPickupAndDropOffTask) {
-            typeLabelSecond.setText(R.string.inventory_deliver_label)
-            typeLabelSecond.setBackgroundResource(R.drawable.task_list_item_dropoff_bg)
-            typeLabelSecond.visibility = View.VISIBLE
-        } else {
-            typeLabelSecond.visibility = View.GONE
+        with(binding.taskSpecialStatusThirdLabel) {
+            if (isPickupAndDropOffTask) {
+                setText(R.string.inventory_deliver_label)
+                setBackgroundResource(R.drawable.task_list_item_dropoff_bg)
+                visibility = View.VISIBLE
+            } else {
+                visibility = View.GONE
+            }
         }
     }
 
     private fun updateLabelServicePlan(task: Task) {
         val name = task.servicePlan?.name
-        if (name.isNullOrBlank()) {
-            servicePlanLabel.visibility = View.GONE
-        } else {
-            servicePlanLabel.text = name
-            servicePlanLabel.visibility = View.VISIBLE
+        with(binding.taskServicePlanLabel) {
+            if (name.isNullOrBlank()) {
+                visibility = View.GONE
+                if (task.groupUUID.isNotEmpty()) {
+                    visibility = View.VISIBLE
+                    text = "Grouped task"
+                }
+            } else {
+                text = name
+                visibility = View.VISIBLE
+            }
         }
     }
 
     private fun setCustomerAddress(task: Task) {
         val waypoint = task.currentWayPoint
         if (waypoint != null) {
-            if (waypoint.locationName.isNullOrBlank()) {
-                customerAddressName.visibility = View.GONE
+            if (waypoint.locationName.isBlank()) {
+                binding.customerAddressName.visibility = View.GONE
             } else {
-                customerAddressName.visibility = View.VISIBLE
-                customerAddressName.text = waypoint.locationName
+                binding.customerAddressName.visibility = View.VISIBLE
+                binding.customerAddressName.text = waypoint.locationName
             }
 
             val addressType = AddressTypeUtil.getTextByType(itemView.context, waypoint.addressType)
-            customerAddressType.text = addressType
+            binding.customerAddressType.text = addressType
             if (addressType.isBlank()) {
-                customerAddressType.visibility = View.GONE
+                binding.customerAddressType.visibility = View.GONE
             } else {
-                customerAddressType.visibility = View.VISIBLE
+                binding.customerAddressType.visibility = View.VISIBLE
             }
         } else {
-            customerAddressName.visibility = View.GONE
-            customerAddressType.visibility = View.GONE
+            binding.customerAddressName.visibility = View.GONE
+            binding.customerAddressType.visibility = View.GONE
         }
     }
 
     private fun setAddress(task: Task) {
-        if (task.currentWayPoint != null && task.currentWayPoint!!.isFindMe) {
-            address.text = itemView.resources.getString(R.string.find_me_message)
-        } else {
-            address.text = task.extendedAddress
+        with(binding.taskAddress) {
+            if (task.currentWayPoint != null && task.currentWayPoint!!.isFindMe) {
+                text = itemView.resources.getString(R.string.find_me_message)
+            } else {
+                text = task.extendedAddress
+            }
         }
     }
 
@@ -265,31 +268,31 @@ class TaskViewHolder(
     }
 
     private fun setAddressSecondLayoutVisibility() {
-        if (customerAddressType.visibility == View.GONE && addressSecondLine.visibility == View.GONE) {
-            customerAddressSecondLayout.visibility = View.GONE
+        if (binding.customerAddressType.visibility == View.GONE && binding.taskAddressSecondLine.visibility == View.GONE) {
+            binding.taskAddressSecondLayout.visibility = View.GONE
         } else {
-            customerAddressSecondLayout.visibility = View.VISIBLE
+            binding.taskAddressSecondLayout.visibility = View.VISIBLE
         }
     }
 
     private fun refreshLateIndication(task: Task) {
-        due.text = TimeUtil.getTaskTimeDynamicFormat(
+        binding.taskTime.text = TimeUtil.getTaskTimeDynamicFormat(
             itemView.context,
             task.scheduledAt,
             R.string.tomorrow_label_for_date
         )
 
         if (task.isLate) {
-            due.setTextColor(getColor(itemView.context, R.color.list_item_red))
-            lateIndication.visibility = View.VISIBLE
+            binding.taskTime.setTextColor(getColor(itemView.context, R.color.list_item_red))
+            binding.taskLateIndication.visibility = View.VISIBLE
         } else {
-            due.setTextColor(getColor(itemView.context, R.color.list_item_black))
-            lateIndication.visibility = View.GONE
+            binding.taskTime.setTextColor(getColor(itemView.context, R.color.list_item_black))
+            binding.taskLateIndication.visibility = View.GONE
         }
     }
 
     @ColorInt
-    open fun getColor(context: Context, @ColorRes colorResId: Int): Int {
+    fun getColor(context: Context, @ColorRes colorResId: Int): Int {
         return ResourcesCompat.getColor(context.resources, colorResId, context.theme)
     }
 }
