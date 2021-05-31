@@ -15,14 +15,12 @@ import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import driver_sdk.models.Waypoint
-import driver_sdk.models.configuration.TaskActionItem
 import kotlinx.android.synthetic.main.task_fragment.*
 
 
 class TaskFragment : AuthenticatedFragment() {
 
     private val args: TaskFragmentArgs by navArgs()
-    private val driverSdk = DriverSdkProvider.driverSdk()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,9 +85,8 @@ class TaskFragment : AuthenticatedFragment() {
     }
 
     private fun showTaskActionsDialog() {
-        val currWayPointId = driverSdk.data.task(args.taskId).value?.currentWayPointId
         findNavController().navigate(
-            TaskFragmentDirections.actionTaskFragmentToDialogActions(args.taskId, currWayPointId)
+            TaskFragmentDirections.actionTaskFragmentToDialogActions(args.taskId)
         )
     }
 }

@@ -1,10 +1,12 @@
 package com.bringg.android.example.driversdk
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import driver_sdk.account.LoginMerchant
+import driver_sdk.actions.FormData
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.actions.DriverActionData
 import driver_sdk.driver.infrastructure.DriverSdk
@@ -22,7 +24,7 @@ import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.WayPointUpdatedDataFromApp
-import driver_sdk.models.configuration.TaskActionItem
+import driver_sdk.models.enums.ImageType
 import driver_sdk.tasks.TaskCancelResult
 
 class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
@@ -207,21 +209,56 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
         taskId: Long,
         waypointId: Long = 0,
         taskInventoryId: Long = 0,
-        taskActionItem: TaskActionItem,
-        text: String
+        text: String,
+        callback: ResultCallback<NoteResult>
     ) {
-        val actionData = DriverActionData.Builder(taskActionItem)
+        val actionData = DriverActionData.Builder()
             .taskId(taskId)
             .waypointId(waypointId)
             .inventoryItemId(taskInventoryId)
         driverSdk.actions.submitNote(
             actionData.build(),
             text,
-            object : ResultCallback<NoteResult> {
-                override fun onResult(result: NoteResult) {
-                    Log.i("CancelTask", "note result=$result")
-                }
-            })
+            callback
+        )
+    }
+
+    fun submitImage(
+        taskId: Long,
+        waypointId: Long = 0,
+        taskInventoryId: Long = 0,
+        imageType: ImageType,
+        bitmap: Bitmap,
+        imageDeletionUri: String?,
+        callback: ResultCallback<NoteResult>
+    ) {
+        val actionData = DriverActionData.Builder()
+            .taskId(taskId)
+            .waypointId(waypointId)
+            .inventoryItemId(taskInventoryId)
+        driverSdk.actions.submitImage(
+            actionData.build(),
+            imageType,
+            bitmap,
+            imageDeletionUri,
+            callback
+        )
+    }
+
+    fun submitForm(
+        taskId: Long,
+        waypointId: Long = 0,
+        taskInventoryId: Long = 0,
+        formData: FormData
+    ) {
+        val actionData = DriverActionData.Builder()
+            .taskId(taskId)
+            .waypointId(waypointId)
+            .inventoryItemId(taskInventoryId)
+        driverSdk.actions.submitForm(
+            actionData.build(),
+            formData
+        )
     }
     //endregion
 

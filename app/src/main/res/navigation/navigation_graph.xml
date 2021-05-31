@@ -115,9 +115,6 @@
             <argument
                 android:name="task_id"
                 app:argType="long" />
-            <argument
-                android:name="waypoint_id"
-                app:argType="long" />
         </dialog>
         <dialog
             android:id="@+id/dialog_cancel_task"
