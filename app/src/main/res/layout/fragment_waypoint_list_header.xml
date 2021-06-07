@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/waypoint_root_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/waypoint_root_container"
     android:padding="3dp">
 
     <RelativeLayout
@@ -16,7 +16,7 @@
             android:id="@+id/customer_title"
             layout="@layout/layout_way_point_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,10 +59,10 @@
             android:id="@+id/way_point_status_label_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/way_point_status_label"
             android:layout_alignParentEnd="true"
             android:layout_gravity="end"
             android:layout_marginBottom="3dp"
-            android:layout_alignTop="@+id/way_point_status_label"
             android:background="@color/inventory_green_deliver_background"
             android:paddingStart="5dp"
             android:paddingTop="2dp"
@@ -279,4 +279,17 @@
             tools:text="12.34" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Waypoint extras:" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_total_extras"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp" />
 </LinearLayout>

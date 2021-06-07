@@ -1,67 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.taskList.TaskListFragment">
+    tools:context=".tasklist.TaskListFragment">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/home_state_card"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/task_list_fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".tasklist.TaskListFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/home_state_recycler"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/task_list_swipe_to_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_list_top_barrier">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_task_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/list_item_inventory_item" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/task_list_fragment_empty"
+                    style="@style/TextAppearance.MaterialComponents.Headline4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="You don't have any orders"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/admin_messages_expandable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="3"
-            tools:listitem="@layout/list_item_home_state" />
-    </androidx.cardview.widget.CardView>
+            app:expandable_parentLayout="@layout/admin_messages_title"
+            app:expandable_secondLayout="@layout/admin_messages_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/task_list_swipe_to_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/task_list_shift_state_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_state_card">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/home_state_expandable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_cluster_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/rv_task_list"
-                android:layout_marginBottom="5dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/list_item_inventory_item" />
+            android:layout_height="wrap_content"
+            app:expandable_parentLayout="@layout/home_state_title"
+            app:expandable_secondLayout="@layout/home_state_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/admin_messages_expandable" />
 
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/clusters_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:expandable_parentLayout="@layout/clusters_title"
+            app:expandable_secondLayout="@layout/cluster_list"
+            app:expandable_spinner_gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/home_state_expandable" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_task_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/rv_cluster_list"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/list_item_inventory_item" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/task_list_top_barrier"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="clusters_expandable,home_state_expandable,admin_messages_expandable" />
 
-    <Button
-        android:id="@+id/task_list_shift_state_button"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:text="@string/start_shift"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        android:id="@+id/task_list_fragment_bottom_sheet"
+        layout="@layout/bottom_sheet_task_list_fragment" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

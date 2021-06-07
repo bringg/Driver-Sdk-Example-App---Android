@@ -7,7 +7,7 @@
 
     <include layout="@layout/list_item_inventory_item" />
 
-    <com.bringg.android.example.driversdk.ui.inventory.InventoryQuantityChooser
+    <com.bringg.android.example.driversdk.inventory.InventoryQuantityChooser
         android:id="@+id/quantity_chooser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
