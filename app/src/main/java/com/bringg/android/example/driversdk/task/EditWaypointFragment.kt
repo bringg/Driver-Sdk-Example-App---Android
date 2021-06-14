@@ -2,6 +2,7 @@ package com.bringg.android.example.driversdk.task
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,11 +36,12 @@ import driver_sdk.models.WayPointUpdatedDataFromApp
 import driver_sdk.models.Waypoint
 import driver_sdk.util.ext.ifEmpty
 import java.sql.Date
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-open class EditWaypointFragment : AuthenticatedFragment() {
+class EditWaypointFragment : AuthenticatedFragment() {
 
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
     private lateinit var placesClient: PlacesClient
@@ -63,8 +65,71 @@ open class EditWaypointFragment : AuthenticatedFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        updateWayPointDetails()
-        setTimeWindowListeners()
+        viewModel.data.waypoint(args.waypointId).observe(viewLifecycleOwner) {
+            it?.let { waypoint ->
+                setTimeWindowListeners()
+                updateSelectedPlace(place, waypoint)
+                if (waypoint.timeWindowStart > 0)
+                    binding.startTimeWindow.setText(dateFormat.format(Date(waypoint.timeWindowStart)))
+                if (waypoint.timeWindowEnd > 0)
+                    binding.endTimeWindow.setText(dateFormat.format(Date(waypoint.timeWindowEnd)))
+                binding.editWaypointBtnSubmit.setOnClickListener {
+                    val changedData = createUpdate(waypoint)
+                    if (!changedData.isEmpty()) {
+                        viewModel.updateWaypoint(changedData)
+                    }
+                    findNavController().navigateUp()
+                }
+            }
+        }
+    }
+
+    private fun createUpdate(waypoint: Waypoint): WayPointUpdatedDataFromApp {
+        return WayPointUpdatedDataFromApp(
+            taskId = waypoint.taskId,
+            wayPointId = waypoint.id,
+            customerName = binding.customerName.text.toStringOrNull(),
+            customerEmail = binding.customerEmail.text.toStringOrNull(),
+            customerPhone = binding.customerPhone.text.toStringOrNull(),
+            lat = place?.latLng?.latitude,
+            lng = place?.latLng?.longitude,
+            formattedAddress = place?.address,
+            street = binding.addressStreet.text.toStringOrNull(),
+            city = binding.addressCity.text.toStringOrNull(),
+            houseNumber = binding.houseNumber.text.toStringOrNull(),
+            zipCode = binding.zipcode.text.toStringOrNull(),
+            secondLineAddress = binding.addressSecondLine.text.toStringOrNull(),
+            startTimeWindow = binding.startTimeWindow.text.timeMillis(dateFormat),
+            endTimeWindow = binding.endTimeWindow.text.timeMillis(dateFormat)
+        )
+    }
+
+    private fun updateSelectedPlace(place: Place?, waypoint: Waypoint) {
+        this.place = place
+        initAddressAutoComplete(waypoint)
+        val addressComponents = place?.addressComponents?.asList()
+        with(binding) {
+            customerEmail.setText(waypoint.email)
+            addressStreet.setText(addressComponents?.firstOrNull { it.types.contains("route") }?.name.ifEmpty { waypoint.street })
+            addressCity.setText(addressComponents?.firstOrNull { it.types.contains("locality") }?.name.ifEmpty { waypoint.city })
+            houseNumber.setText(addressComponents?.firstOrNull { it.types.contains("street_number") }?.name.ifEmpty { waypoint.houseNumber })
+            zipcode.setText(addressComponents?.firstOrNull { it.types.contains("postal_code") }?.name.ifEmpty { waypoint.houseNumber })
+        }
+        if (waypoint.secondLineAddress.isNullOrBlank()) {
+            binding.addressSecondLine.setText(addressComponents?.firstOrNull { it.types.contains("administrative_area_level_1") }?.name?.ifEmpty { waypoint.secondLineAddress })
+        } else {
+            binding.addressSecondLine.setText(waypoint.secondLineAddress)
+        }
+        if (waypoint.customerName.isBlank()) {
+            binding.customerName.setText(place?.name.orEmpty())
+        } else {
+            binding.customerName.setText(waypoint.customerName)
+        }
+        if (waypoint.phone.isBlank()) {
+            binding.customerPhone.setText(place?.phoneNumber.orEmpty())
+        } else {
+            binding.customerPhone.setText(waypoint.phone)
+        }
     }
 
     private fun initAddressAutoComplete(waypoint: Waypoint) {
@@ -96,53 +161,6 @@ open class EditWaypointFragment : AuthenticatedFragment() {
                 Log.i("placesFragment", "An error occurred: $status")
             }
         })
-    }
-
-    private fun updateSelectedPlace(place: Place?, waypoint: Waypoint) {
-        this.place = place
-        initAddressAutoComplete(waypoint)
-        val addressComponents = place?.addressComponents?.asList()
-        val name = waypoint.customer?.getName() ?: waypoint.customerName
-        val phone = waypoint.customer?.phone ?: waypoint.phone
-        val email = waypoint.customer?.email ?: waypoint.email
-        with(binding) {
-            customerEmail.setText(email)
-            addressStreet.setText(addressComponents?.firstOrNull { it.types.contains("route") }?.name.ifEmpty { waypoint.street })
-            addressCity.setText(addressComponents?.firstOrNull { it.types.contains("locality") }?.name.ifEmpty { waypoint.city })
-            houseNumber.setText(addressComponents?.firstOrNull { it.types.contains("street_number") }?.name.ifEmpty { waypoint.houseNumber })
-            zipcode.setText(addressComponents?.firstOrNull { it.types.contains("postal_code") }?.name.ifEmpty { waypoint.houseNumber })
-        }
-        if (waypoint.secondLineAddress.isNullOrBlank()) {
-            binding.addressSecondLine.setText(addressComponents?.firstOrNull { it.types.contains("administrative_area_level_1") }?.name?.ifEmpty { waypoint.secondLineAddress })
-        } else {
-            binding.addressSecondLine.setText(waypoint.secondLineAddress)
-        }
-
-        if (name.isBlank()) {
-            binding.customerName.setText(place?.name.orEmpty())
-        } else {
-            binding.customerName.setText(name)
-        }
-        if (phone.isBlank()) {
-            binding.customerPhone.setText(place?.phoneNumber.orEmpty())
-        } else {
-            binding.customerPhone.setText(name)
-        }
-    }
-
-    private fun updateWayPointDetails() {
-        viewModel.data.waypoint(args.waypointId).observe(viewLifecycleOwner) {
-            it?.let { waypoint ->
-                updateSelectedPlace(place, waypoint)
-                if (waypoint.timeWindowStart > 0)
-                    binding.startTimeWindow.setText(dateFormat.format(Date(waypoint.timeWindowStart)))
-                if (waypoint.timeWindowEnd > 0)
-                    binding.endTimeWindow.setText(dateFormat.format(Date(waypoint.timeWindowEnd)))
-                binding.editWaypointBtnSubmit.setOnClickListener {
-                    onDoneClicked(waypoint)
-                }
-            }
-        }
     }
 
     private fun setTimeWindowListeners() {
@@ -186,34 +204,19 @@ open class EditWaypointFragment : AuthenticatedFragment() {
         dialog.show(childFragmentManager, "edit_waypoint_date_picker")
     }
 
-    open fun onDoneClicked(waypoint: Waypoint) {
-        val changedData = getChangedData(waypoint)
-        if (!changedData.isEmpty()) {
-            viewModel.updateWaypoint(changedData)
-        }
-        findNavController().navigateUp()
-    }
+}
 
-    internal open fun getChangedData(waypoint: Waypoint): WayPointUpdatedDataFromApp {
-        val builder = WayPointUpdatedDataFromApp.Builder(waypoint.taskId, waypoint.id)
-            // time window:
-            .startTimeWindow(dateFormat.parse(binding.startTimeWindow.text.toString()).time)
-            .endTimeWindow(dateFormat.parse(binding.endTimeWindow.text.toString()).time)
-            // customer:
-            .customerName(binding.customerName.text.toString())
-            .customerEmail(binding.customerEmail.text.toString())
-            .customerPhone(binding.customerPhone.text.toString())
-            // location
-            .lat(place?.latLng?.latitude ?: waypoint.lat)
-            .lng(place?.latLng?.longitude ?: waypoint.lng)
-            // full formatted address
-            .address(place?.address ?: waypoint.extendedAddress)
-            // when not using Place object, address should be updated using all following:
-            .street(binding.addressStreet.text.toString())
-            .city(binding.addressCity.text.toString())
-            .houseNumber(binding.houseNumber.text.toString())
-            .zipCode(binding.zipcode.text.toString())
-            .secondLineAddress(binding.addressSecondLine.text.toString())
-        return builder.build()
+private fun Editable?.toStringOrNull(): String? {
+    if (this.isNullOrBlank())
+        return null
+    return this.toString()
+}
+
+private fun Editable?.timeMillis(dateFormat: DateFormat): Long? {
+    if (this.isNullOrBlank()) return null
+    return try {
+        dateFormat.parse(toString()).time
+    } catch (ignored: Throwable) {
+        null
     }
 }

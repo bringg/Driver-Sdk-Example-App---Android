@@ -86,7 +86,7 @@ class WaypointView : CardView {
             }
         }
 
-        eta_text.text = if (waypoint.etaTime == 0L) "Start the order to calculate ETA" else dateFormat.format(Date(waypoint.etaTime))
+        eta_text.text = if (waypoint.etaTime == 0L) if (!waypoint.isStarted) "Start the order to calculate ETA" else "" else dateFormat.format(Date(waypoint.etaTime))
         wp_started_at_text.text = if (waypoint.startedTime == 0L) "" else dateFormat.format(Date(waypoint.scheduledTime))
         wp_checkin_at_text.text = if (waypoint.checkinTime == 0L) "" else dateFormat.format(Date(waypoint.checkinTime))
         wp_checkout_text.text = if (waypoint.checkoutTime == 0L) "" else dateFormat.format(Date(waypoint.checkoutTime))
