@@ -203,6 +203,10 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     fun updateWaypoint(update: WayPointUpdatedDataFromApp) {
         driverSdk.task.updateWaypoint(update)
     }
+
+    fun updateExtras(taskId: Long, extras: JSONObject): LiveData<ExtrasUpdateResult> {
+        return driverSdk.task.updateExtras(taskId, extras)
+    }
     //endregion
 
     // region note actions

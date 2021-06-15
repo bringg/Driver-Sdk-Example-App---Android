@@ -3,4 +3,7 @@
     <item
         android:id="@+id/cancel_task"
         android:title="@string/cancel_task" />
+    <item
+        android:id="@+id/update_extras"
+        android:title="@string/update_extras" />
 </menu>
