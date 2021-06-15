@@ -31,6 +31,10 @@ class ActionsDialog : DialogFragment() {
     private val args: ActionsDialogArgs by navArgs()
     private val TAG = "ActionsDialog"
 
+    private val SUBMIT_NOTE = "Submit Note"
+    private val SUBMIT_IMAGE = "Submit Image"
+    private val SUBMIT_FORM = "Submit Form"
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_task_actions_dialog, container, false)
     }
@@ -38,7 +42,7 @@ class ActionsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_actions.adapter = TaskActionsAdapter(
-            listOf( "Submit Note", "Submit Image", "Submit Form" )
+            listOf( SUBMIT_NOTE, SUBMIT_IMAGE, SUBMIT_FORM )
         ) {
             clickTaskAction(it)
         }
@@ -50,10 +54,10 @@ class ActionsDialog : DialogFragment() {
             BringgLog.error(TAG, "Can't submit action, waypoint is null")
             return
         }
-        when (it.tag as TaskAction) {
-            TaskAction.TAKE_NOTE -> submitNote(waypointId)
-            TaskAction.TAKE_PICTURE -> submitImage(waypointId)
-            TaskAction.FORM -> submitForm(waypointId)
+        when (it.txt_action_name.text) {
+            SUBMIT_NOTE -> submitNote(waypointId)
+            SUBMIT_IMAGE -> submitImage(waypointId)
+            SUBMIT_FORM -> submitForm(waypointId)
         }
     }
 

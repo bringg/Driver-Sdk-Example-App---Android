@@ -163,16 +163,8 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
         })
     }
 
-    fun startTask(taskId: Long) {
-        driverSdk.task.startTask(taskId, object : ResultCallback<TaskStartResult> {
-            override fun onResult(result: TaskStartResult) {
-                if (result.success) {
-                    Log.i(TAG, "task was successfully started, LiveData event will be posted, result=$result")
-                } else {
-                    Log.i(TAG, "starting the task failed, error=${result.error}")
-                }
-            }
-        })
+    fun startTask(taskId: Long): LiveData<TaskStartResult> {
+        return driverSdk.task.startTask(taskId)
     }
 
     fun arriveToWayPoint(waypointId: Long) {
