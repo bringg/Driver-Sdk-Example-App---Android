@@ -21,6 +21,7 @@ import driver_sdk.driver.model.result.ShiftStartResult
 import driver_sdk.driver.model.result.TakeOwnershipResult
 import driver_sdk.driver.model.result.TaskAcceptResult
 import driver_sdk.driver.model.result.TaskRejectResult
+import driver_sdk.driver.model.result.TaskStartResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
