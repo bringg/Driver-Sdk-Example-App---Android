@@ -27,7 +27,6 @@ import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.WayPointUpdatedDataFromApp
 import driver_sdk.models.enums.ImageType
-import driver_sdk.models.configuration.TaskActionItem
 import driver_sdk.models.scan.ScanData
 import driver_sdk.tasks.TaskCancelResult
 import org.json.JSONObject
@@ -278,7 +277,7 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
 
     //region scan
     fun takeOwnership(scanData: ScanData): LiveData<TakeOwnershipResult> {
-        return driverSdk.scan.takeOwnershipAndAddScan(scanData)
+        return driverSdk.scan.task.takeOwnership(scanData)
     }
     //endregion
 }

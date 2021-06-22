@@ -289,9 +289,9 @@ class TaskListFragment : AuthenticatedFragment() {
     private fun takeOwnership() {
         val scanString = "HyMuwBcYUt"
         viewModel.takeOwnership(ScanData(scanString, true)).observe(this, { result ->
-            when(result) {
-                is TakeOwnershipResult.Success -> Log.i(TAG, "Take ownership: task id: ${result.task.id}")
-                is TakeOwnershipResult.Error -> Log.i(TAG, "Take ownership: error=${result.error.name} message=${result.errorMessage}")
+            when (result) {
+                is TakeOwnershipResult.Success -> Log.i(TAG, "Take ownership: task=${result.task}")
+                is TakeOwnershipResult.Error -> Log.i(TAG, "Take ownership: result=$result")
             }
         })
     }

@@ -33,8 +33,8 @@ class TaskInventoryRecyclerAdapter(private val context: Context, private val ite
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InventoryViewHolder {
-        if (viewType == TYPE_INVENTORY_SELECTED) return EditableInventoryItemViewHolder(inflateView(parent, R.layout.list_item_inventory_item_edit_mode), itemPresenter)
-        else return InventoryItemViewHolder(inflateView(parent, R.layout.list_item_inventory_item), itemPresenter)
+        return if (viewType == TYPE_INVENTORY_SELECTED) EditableInventoryItemViewHolder(inflateView(parent, R.layout.list_item_inventory_item_edit_mode), itemPresenter)
+        else InventoryItemViewHolder(inflateView(parent, R.layout.list_item_inventory_item), itemPresenter)
     }
 
     override fun onViewDetachedFromWindow(holder: InventoryViewHolder) {
