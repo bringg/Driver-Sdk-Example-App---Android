@@ -14,8 +14,11 @@ import androidx.navigation.fragment.navArgs
 import com.bringg.android.example.driversdk.R
 import com.bringg.android.example.driversdk.authentication.AuthenticatedFragment
 import com.google.android.material.tabs.TabLayoutMediator
+import driver_sdk.driver.model.result.ExtrasUpdateResult
 import driver_sdk.models.Waypoint
+import driver_sdk.util.ext.TAG
 import kotlinx.android.synthetic.main.task_fragment.*
+import org.json.JSONObject
 
 
 class TaskFragment : AuthenticatedFragment() {
@@ -76,6 +79,11 @@ class TaskFragment : AuthenticatedFragment() {
                 showTaskActionsDialog()
                 return true
             }
+            R.id.update_extras -> {
+                setTaskExtras()
+                return true
+            }
+
         }
         return false
     }
@@ -88,5 +96,23 @@ class TaskFragment : AuthenticatedFragment() {
         findNavController().navigate(
             TaskFragmentDirections.actionTaskFragmentToDialogActions(args.taskId)
         )
+    }
+
+    private fun setTaskExtras() {
+        val currExtras = viewModel.data.extras.taskExtras(args.taskId).value
+        val newExtras: JSONObject
+        if (currExtras != null) {
+            newExtras = currExtras
+            newExtras.put("key", "value")
+        } else {
+            newExtras = JSONObject().put("key", "value")
+        }
+
+        viewModel.updateExtras(args.taskId, newExtras).observe(this, { result ->
+            when (result) {
+                is ExtrasUpdateResult.Success -> Log.i(TAG, "Update task extras task id=${args.taskId} success")
+                is ExtrasUpdateResult.Error -> Log.i(TAG, "Failed to update task extras task id=${args.taskId} error=${result.error}")
+            }
+        })
     }
 }

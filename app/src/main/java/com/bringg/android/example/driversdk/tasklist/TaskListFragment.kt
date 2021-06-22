@@ -4,6 +4,9 @@ import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -35,9 +38,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.CreateGroupTaskResult
+import driver_sdk.driver.model.result.TakeOwnershipResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.models.Cluster
 import driver_sdk.models.Task
+import driver_sdk.models.scan.ScanData
 import driver_sdk.tasks.TaskCancelResult
 
 class TaskListFragment : AuthenticatedFragment() {
@@ -56,6 +61,7 @@ class TaskListFragment : AuthenticatedFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = TaskListFragmentBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -263,5 +269,30 @@ class TaskListFragment : AuthenticatedFragment() {
         if (START_SHIFT_WITH_LOCATION_PERMISSION_REQUEST_CODE == requestCode && grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
             viewModel.startShift()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.task_list_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.take_ownership -> {
+                takeOwnership()
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun takeOwnership() {
+        val scanString = "HyMuwBcYUt"
+        viewModel.takeOwnership(ScanData(scanString, true)).observe(this, { result ->
+            when(result) {
+                is TakeOwnershipResult.Success -> Log.i(TAG, "Take ownership: task id: ${result.task.id}")
+                is TakeOwnershipResult.Error -> Log.i(TAG, "Take ownership: error=${result.error.name} message=${result.errorMessage}")
+            }
+        })
     }
 }

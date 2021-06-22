@@ -12,11 +12,13 @@ import driver_sdk.driver.actions.DriverActionData
 import driver_sdk.driver.infrastructure.DriverSdk
 import driver_sdk.driver.model.result.CreateGroupTaskResult
 import driver_sdk.driver.model.result.DriverLoginResult
+import driver_sdk.driver.model.result.ExtrasUpdateResult
 import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.driver.model.result.PhoneVerificationRequestResult
 import driver_sdk.driver.model.result.ResetPasswordRequestResult
 import driver_sdk.driver.model.result.ShiftEndResult
 import driver_sdk.driver.model.result.ShiftStartResult
+import driver_sdk.driver.model.result.TakeOwnershipResult
 import driver_sdk.driver.model.result.TaskAcceptResult
 import driver_sdk.driver.model.result.TaskRejectResult
 import driver_sdk.driver.model.result.TaskStartResult
@@ -25,7 +27,10 @@ import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.WayPointUpdatedDataFromApp
 import driver_sdk.models.enums.ImageType
+import driver_sdk.models.configuration.TaskActionItem
+import driver_sdk.models.scan.ScanData
 import driver_sdk.tasks.TaskCancelResult
+import org.json.JSONObject
 
 class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     //region factory
@@ -194,6 +199,10 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     fun updateWaypoint(update: WayPointUpdatedDataFromApp) {
         driverSdk.task.updateWaypoint(update)
     }
+
+    fun updateExtras(taskId: Long, extras: JSONObject): LiveData<ExtrasUpdateResult> {
+        return driverSdk.task.updateExtras(taskId, extras)
+    }
     //endregion
 
     // region note actions
@@ -264,6 +273,12 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
 
     fun deleteMessage(messageId: Long) {
         driverSdk.adminMessages.delete(messageId)
+    }
+    //endregion
+
+    //region scan
+    fun takeOwnership(scanData: ScanData): LiveData<TakeOwnershipResult> {
+        return driverSdk.scan.takeOwnershipAndAddScan(scanData)
     }
     //endregion
 }

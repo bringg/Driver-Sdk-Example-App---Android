@@ -129,6 +129,9 @@
     <string name="title_unread_messages">%d Unread messages</string>
     <string name="edit_waypoint">Edit Waypoint</string>
 
+    <string name="take_ownership">Take Ownership</string>
+    <string name="update_extras">Update Extras</string>
+
     <plurals name="merge_orders_button">
         <item quantity="zero">Merge Orders</item>
         <item quantity="other">Merge %d Orders</item>
