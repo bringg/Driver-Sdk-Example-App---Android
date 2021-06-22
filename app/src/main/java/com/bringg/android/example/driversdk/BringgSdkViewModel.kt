@@ -1,10 +1,12 @@
 package com.bringg.android.example.driversdk
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import driver_sdk.account.LoginMerchant
+import driver_sdk.actions.FormData
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.actions.DriverActionData
 import driver_sdk.driver.infrastructure.DriverSdk
@@ -23,6 +25,7 @@ import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
 import driver_sdk.models.WayPointUpdatedDataFromApp
+import driver_sdk.models.enums.ImageType
 import driver_sdk.models.configuration.TaskActionItem
 import driver_sdk.models.scan.ScanData
 import driver_sdk.tasks.TaskCancelResult
@@ -164,16 +167,8 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
         })
     }
 
-    fun startTask(taskId: Long) {
-        driverSdk.task.startTask(taskId, object : ResultCallback<TaskStartResult> {
-            override fun onResult(result: TaskStartResult) {
-                if (result.success) {
-                    Log.i(TAG, "task was successfully started, LiveData event will be posted, result=$result")
-                } else {
-                    Log.i(TAG, "starting the task failed, error=${result.error}")
-                }
-            }
-        })
+    fun startTask(taskId: Long): LiveData<TaskStartResult> {
+        return driverSdk.task.startTask(taskId)
     }
 
     fun arriveToWayPoint(waypointId: Long) {
@@ -214,21 +209,56 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
         taskId: Long,
         waypointId: Long = 0,
         taskInventoryId: Long = 0,
-        taskActionItem: TaskActionItem,
-        text: String
+        text: String,
+        callback: ResultCallback<NoteResult>
     ) {
-        val actionData = DriverActionData.Builder(taskActionItem)
+        val actionData = DriverActionData.Builder()
             .taskId(taskId)
             .waypointId(waypointId)
             .inventoryItemId(taskInventoryId)
         driverSdk.actions.submitNote(
             actionData.build(),
             text,
-            object : ResultCallback<NoteResult> {
-                override fun onResult(result: NoteResult) {
-                    Log.i("CancelTask", "note result=$result")
-                }
-            })
+            callback
+        )
+    }
+
+    fun submitImage(
+        taskId: Long,
+        waypointId: Long = 0,
+        taskInventoryId: Long = 0,
+        imageType: ImageType,
+        bitmap: Bitmap,
+        imageDeletionUri: String?,
+        callback: ResultCallback<NoteResult>
+    ) {
+        val actionData = DriverActionData.Builder()
+            .taskId(taskId)
+            .waypointId(waypointId)
+            .inventoryItemId(taskInventoryId)
+        driverSdk.actions.submitImage(
+            actionData.build(),
+            imageType,
+            bitmap,
+            imageDeletionUri,
+            callback
+        )
+    }
+
+    fun submitForm(
+        taskId: Long,
+        waypointId: Long = 0,
+        taskInventoryId: Long = 0,
+        formData: FormData
+    ) {
+        val actionData = DriverActionData.Builder()
+            .taskId(taskId)
+            .waypointId(waypointId)
+            .inventoryItemId(taskInventoryId)
+        driverSdk.actions.submitForm(
+            actionData.build(),
+            formData
+        )
     }
     //endregion
 

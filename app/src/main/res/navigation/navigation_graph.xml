@@ -111,10 +111,10 @@
             android:id="@+id/dialog_actions"
             android:name="com.bringg.android.example.driversdk.task.ActionsDialog"
             android:label="@string/label_task_actions"
-            tools:layout="@layout/fragment_cancel_task_reason_selection">
+            tools:layout="@layout/fragment_task_actions_dialog">
             <argument
-                android:name="actions"
-                app:argType="driver_sdk.models.configuration.TaskActionItem[]" />
+                android:name="task_id"
+                app:argType="long" />
         </dialog>
         <dialog
             android:id="@+id/dialog_cancel_task"

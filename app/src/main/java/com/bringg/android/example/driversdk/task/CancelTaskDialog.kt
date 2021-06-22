@@ -14,8 +14,7 @@ import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
 import com.google.android.material.snackbar.Snackbar
 import driver_sdk.content.ResultCallback
-import driver_sdk.models.configuration.TaskAction.TAKE_NOTE
-import driver_sdk.models.configuration.TaskActionItem
+import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.tasks.TaskCancelResult
 import kotlinx.android.synthetic.main.fragment_cancel_task_reason_selection.*
 import kotlinx.android.synthetic.main.list_item_cancel_reason.view.*
@@ -47,7 +46,7 @@ class CancelTaskDialog : DialogFragment() {
                         findNavController().navigateUp()
                     }
                     result.requiredActions.isNotEmpty() -> {
-                        handleMandatoryCancelTaskActions(result.requiredActions)
+                        handleMandatoryCancelTaskActions()
                     }
                     else -> {
                         Snackbar.make(rv_cancel_reasons, "Cancel task returned error, result=$result", Snackbar.LENGTH_LONG).show()
@@ -57,11 +56,15 @@ class CancelTaskDialog : DialogFragment() {
         })
     }
 
-    private fun handleMandatoryCancelTaskActions(actions: Collection<TaskActionItem>) {
+    private fun handleMandatoryCancelTaskActions() {
         viewModel.submitNote(
             taskId = args.taskId,
-            taskActionItem = actions.first { it.taskAction == TAKE_NOTE },
-            text = "this is my note"
+            text = "this is my note",
+            callback = object : ResultCallback<NoteResult> {
+                override fun onResult(result: NoteResult) {
+                    Log.i("Cancel task", "note result=$result")
+                }
+            }
         )
     }
 

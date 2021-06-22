@@ -50,7 +50,7 @@ class WaypointViewObserver(private val viewModel: BringgSdkViewModel, private va
                             override fun onResult(result: WaypointLeaveResult) {
                                 Log.i(TAG, "leave waypoint result=$result")
                                 if (result.requiredActions.isNotEmpty()) {
-                                    navController.navigate(TaskFragmentDirections.actionTaskFragmentToDialogActions(result.requiredActions.toTypedArray()))
+                                    navController.navigate(TaskFragmentDirections.actionTaskFragmentToDialogActions(task.getId()))
                                 }
                             }
                         })
