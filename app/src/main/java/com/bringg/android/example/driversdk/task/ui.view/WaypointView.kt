@@ -92,14 +92,14 @@ class WaypointView : CardView {
         wp_checkout_text.text = if (waypoint.checkoutTime == 0L) "" else dateFormat.format(Date(waypoint.checkoutTime))
     }
 
-    fun refresh(task: Task?, waypoint: Waypoint?, inventoryListPresenter: InventoryListPresenter) {
+    fun refresh(task: Task?, waypoint: Waypoint?) {
         if (task == null || waypoint == null) {
             waypoint_root_container.visibility = View.GONE
         } else {
             waypoint_root_container.visibility = View.VISIBLE
             updateStatus(task, waypoint)
             updateTimeWindowDetails(waypoint)
-            updateInventoryList(task, waypoint, inventoryListPresenter)
+            updateInventoryList(task, waypoint)
             updateAddress(waypoint)
             updateCustomer(waypoint)
         }
@@ -137,8 +137,8 @@ class WaypointView : CardView {
         }
     }
 
-    private fun updateInventoryList(task: Task, waypoint: Waypoint, inventoryListPresenter: InventoryListPresenter) {
-        inventoryLayout.setData(waypoint.flattenedInventoryList.toList(), inventoryListPresenter)
+    private fun updateInventoryList(task: Task, waypoint: Waypoint) {
+        inventoryLayout.setData(waypoint.flattenedInventoryList.toList())
         tv_delivery_fee_value.text = pricingFormat.format(task.deliveryPrice)
         tv_total_value.text = pricingFormat.format(task.totalPrice)
         tv_total_to_be_paid_value.text = pricingFormat.format(task.leftToBePaid)
@@ -148,6 +148,10 @@ class WaypointView : CardView {
 
     fun setExtras(extras: JSONObject?) {
         tv_total_extras.text = extras?.toString(5) ?: "null"
+    }
+
+    fun setOnInventoryClickListener(listener: OnClickListener) {
+        inventoryLayout.setOnClickListener(listener)
     }
 
     companion object {

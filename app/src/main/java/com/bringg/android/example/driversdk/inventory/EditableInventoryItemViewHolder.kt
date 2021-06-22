@@ -20,7 +20,6 @@ class EditableInventoryItemViewHolder(itemView: View, inventoryItemPresenter: In
     private val btnAcceptAllChecked = itemView.findViewById<View>(R.id.btn_accept_all)
     private val btnRejectAllChecked = itemView.findViewById<View>(R.id.btn_reject_all)
     private val txtPartial = itemView.findViewById<TextInputLayout>(R.id.txt_partial)
-
     private val registry = LifecycleRegistry(this).also { it.currentState = State.CREATED }
 
     override fun bind(item: Inventory) {

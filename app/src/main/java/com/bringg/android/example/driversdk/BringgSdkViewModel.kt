@@ -8,11 +8,15 @@ import androidx.lifecycle.ViewModelProvider
 import driver_sdk.account.LoginMerchant
 import driver_sdk.actions.FormData
 import driver_sdk.content.ResultCallback
+import driver_sdk.content.inventory.InventoryIncrementQtyResult
+import driver_sdk.controllers.scan.InventoryScanOptions
 import driver_sdk.driver.actions.DriverActionData
 import driver_sdk.driver.infrastructure.DriverSdk
 import driver_sdk.driver.model.result.CreateGroupTaskResult
 import driver_sdk.driver.model.result.DriverLoginResult
+import driver_sdk.driver.model.result.DriverScanResult
 import driver_sdk.driver.model.result.ExtrasUpdateResult
+import driver_sdk.driver.model.result.FindInventoryScanResult
 import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.driver.model.result.PhoneVerificationRequestResult
 import driver_sdk.driver.model.result.ResetPasswordRequestResult
@@ -25,6 +29,7 @@ import driver_sdk.driver.model.result.TaskStartResult
 import driver_sdk.driver.model.result.UnGroupTaskResult
 import driver_sdk.driver.model.result.WaypointArriveResult
 import driver_sdk.driver.model.result.WaypointLeaveResult
+import driver_sdk.models.Inventory
 import driver_sdk.models.WayPointUpdatedDataFromApp
 import driver_sdk.models.enums.ImageType
 import driver_sdk.models.scan.ScanData
@@ -216,11 +221,7 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
             .taskId(taskId)
             .waypointId(waypointId)
             .inventoryItemId(taskInventoryId)
-        driverSdk.actions.submitNote(
-            actionData.build(),
-            text,
-            callback
-        )
+        driverSdk.actions.submitNote(actionData.build(), text, callback)
     }
 
     fun submitImage(
@@ -236,13 +237,7 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
             .taskId(taskId)
             .waypointId(waypointId)
             .inventoryItemId(taskInventoryId)
-        driverSdk.actions.submitImage(
-            actionData.build(),
-            imageType,
-            bitmap,
-            imageDeletionUri,
-            callback
-        )
+        driverSdk.actions.submitImage(actionData.build(), imageType, bitmap, imageDeletionUri, callback)
     }
 
     fun submitForm(
@@ -278,6 +273,20 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     //region scan
     fun takeOwnership(scanData: ScanData): LiveData<TakeOwnershipResult> {
         return driverSdk.scan.task.takeOwnership(scanData)
+    }
+
+    fun applyScan(inventoryItemId: Long, scanData: ScanData): LiveData<DriverScanResult> {
+        return driverSdk.scan.inventory.markItemScanned(inventoryItemId, scanData, InventoryScanOptions())
+    }
+
+    fun findItemForScanString(waypointId: Long, scanData: ScanData): LiveData<FindInventoryScanResult> {
+        return driverSdk.scan.inventory.findFirstRemainingItem(waypointId, scanData, InventoryScanOptions())
+    }
+    //endregion
+
+    //region inventory actions
+    fun incrementInventoryQuantity(inventory: Inventory): LiveData<InventoryIncrementQtyResult> {
+        return driverSdk.inventory.incrementCurrentQuantity(inventory.id)
     }
     //endregion
 }

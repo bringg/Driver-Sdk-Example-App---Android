@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.R
 import driver_sdk.models.Inventory
 
-class InventoryPricingAdapter(private val inventoryItems: List<Inventory>, private val inventoryListPresenter: InventoryListPresenter) : RecyclerView.Adapter<WpInventoryViewHolder>() {
+class InventoryPricingAdapter(private val inventoryItems: List<Inventory>) : RecyclerView.Adapter<WpInventoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WpInventoryViewHolder {
         val listItemInventoryWithPrice = if (PRICING_VIEW_TYPE_HEADER == viewType) R.layout.list_item_inventory_title else R.layout.list_item_inventory_with_price
@@ -21,7 +21,7 @@ class InventoryPricingAdapter(private val inventoryItems: List<Inventory>, priva
 
     override fun onBindViewHolder(holder: WpInventoryViewHolder, position: Int) {
         if (PRICING_VIEW_TYPE_ROW == holder.itemViewType)
-            holder.bind(inventoryItems[position - 1], inventoryListPresenter)
+            holder.bind(inventoryItems[position - 1])
     }
 
     companion object {
