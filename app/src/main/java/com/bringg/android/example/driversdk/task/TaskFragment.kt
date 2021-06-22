@@ -72,11 +72,21 @@ class TaskFragment : AuthenticatedFragment() {
                 showCancelDialog()
                 return true
             }
+            R.id.task_actions -> {
+                showTaskActionsDialog()
+                return true
+            }
         }
         return false
     }
 
     private fun showCancelDialog() {
         findNavController().navigate(TaskFragmentDirections.actionTaskFragmentToDialogCancelTask(args.taskId))
+    }
+
+    private fun showTaskActionsDialog() {
+        findNavController().navigate(
+            TaskFragmentDirections.actionTaskFragmentToDialogActions(args.taskId)
+        )
     }
 }
