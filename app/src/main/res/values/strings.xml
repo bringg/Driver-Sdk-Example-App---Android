@@ -70,7 +70,7 @@
     <string name="inventory_quantity_action_collect_all">"Collect all"</string>
     <string name="inventory_quantity_action_deliver">"Deliver"</string>
     <string name="inventory_quantity_action_deliver_all">"Deliver all"</string>
-    <string name="inventory_quantity_action_partial">"Apply Partial Quantity"</string>
+    <string name="inventory_quantity_action_partial">"Partial Quantity"</string>
     <string name="inventory_quantity_action_reject">"Reject"</string>
     <string name="inventory_quantity_action_reject_all">"Reject all"</string>
     <string name="inventory_quantity_title">"Quantity"</string>
@@ -131,6 +131,8 @@
 
     <string name="take_ownership">Take Ownership</string>
     <string name="update_extras">Update Extras</string>
+    <string name="type_item_barcode_to_scan">Type item barcode to scan</string>
+    <string name="inventory">Inventory</string>
 
     <plurals name="merge_orders_button">
         <item quantity="zero">Merge Orders</item>

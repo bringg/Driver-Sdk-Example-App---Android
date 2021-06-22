@@ -3,26 +3,25 @@ package com.bringg.android.example.driversdk.inventory
 import android.view.View
 import com.bumptech.glide.Glide
 import driver_sdk.models.Inventory
-import driver_sdk.util.annotations.Mockable
 import kotlinx.android.synthetic.main.list_item_inventory_item.view.*
 
-@Mockable
 open class InventoryItemViewHolder internal constructor(itemView: View, private val inventoryItemPresenter: InventoryItemPresenter) : InventoryViewHolder(itemView) {
 
     override fun bind(item: Inventory) {
         itemView.inventory_title.text = item.title
-        itemView.inventory_id.text = item.externalId
-        itemView.inventory_subtitle.text = "${item.originalQuantity} x ${item.title}"
-        itemView.inventory_comment.text = item.note
-        itemView.inventory_editable_quantity.text = item.currentQuantity.toString()
+        itemView.inventory_external_id.text = "External Id: ${item.externalId}"
+        itemView.inventory_scan_string.text = "Barcode: ${item.scanString} " + (if (item.wasScanned()) " (Scanned)" else "(Not scanned)")
+        itemView.inventory_assign_scan_string.text = "Assigned Scan: ${item.assignedScanString}"
+        itemView.inventory_comment.text = "Comment: ${item.note}"
+        itemView.inventory_price.text = "Cost: " + "%.2f".format(item.cost) + " (unit price: ${item.price})"
+        itemView.inventory_weight.text = "Weight: " + "%.2f".format(item.weight)
+        itemView.inventory_dimensions.text = "Dimensions: W=${item.width}, H=${item.height}, L=${item.length}"
 
         bindSubItems(item)
         bindImage(item)
-        bindPrice(item)
-        bindDimensions(item)
+
         val allSubInventoriesFullyApplied = item.allSubInventoriesFullyApplied()
         bindQuantity(item, allSubInventoriesFullyApplied)
-
         itemView.setOnClickListener { inventoryItemPresenter.showEditingView(item) }
     }
 
@@ -50,16 +49,5 @@ open class InventoryItemViewHolder internal constructor(itemView: View, private 
             visibility = View.GONE
             setImageDrawable(null)
         }
-    }
-
-    private fun bindPrice(item: Inventory) = with(itemView) {
-        inventory_price_separator.visibility = View.VISIBLE
-        inventory_price.visibility = View.VISIBLE
-        inventory_price.text = "%.2f".format(item.cost)
-    }
-
-    private fun bindDimensions(item: Inventory) = with(itemView) {
-        inventory_dimensions.text = "W=${item.width}, H=${item.height}, L=${item.length}"
-        inventory_dimensions_group.visibility = View.VISIBLE
     }
 }

@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.bringg.android.example.driversdk.R
@@ -48,18 +49,29 @@ class WaypointFragment : AuthenticatedFragment() {
         super.onViewCreated(view, savedInstanceState)
         val waypointId = requireArguments().getLong("waypoint_id")
         val waypointView = view.findViewById<WaypointView>(R.id.waypoint_view)
-        val waypointNextActionButtonObserver = WaypointViewObserver(viewModel, waypointId, view, findNavController())
+        val btnInventory = view.findViewById<TextView>(R.id.btn_waypoint_inventory)
+        val waypointNextActionButtonObserver = WaypointViewObserver(viewModel, view, findNavController())
         viewModel.data.waypoint(waypointId).observe(viewLifecycleOwner) { waypoint ->
             if (waypoint == null) {
-                waypointView.refresh(null, null, waypointNextActionButtonObserver)
+                waypointView.refresh(null, null)
             } else {
                 val task = viewModel.data.task(waypoint.taskId).value
-                waypointView.refresh(task, waypoint, waypointNextActionButtonObserver)
+                waypointView.refresh(task, waypoint)
+                waypointView.setOnInventoryClickListener {
+                    navigateToInventoryFragment(waypoint.id)
+                }
+                btnInventory.setOnClickListener {
+                    navigateToInventoryFragment(waypoint.id)
+                }
             }
             waypointNextActionButtonObserver.onChanged(waypoint)
         }
         viewModel.data.extras.waypointExtras(waypointId).observe(viewLifecycleOwner) {
             waypointView.setExtras(it)
         }
+    }
+
+    private fun navigateToInventoryFragment(waypointId: Long) {
+        findNavController().navigate(TaskFragmentDirections.actionTaskFragmentToInventoryFragment(waypointId))
     }
 }

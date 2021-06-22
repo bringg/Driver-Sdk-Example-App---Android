@@ -4,240 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/inventory_ready_to_deliver_text"
+    <ImageView
+        android:id="@+id/inventory_image"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/inventory_image_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="Ready to deliver"
-        android:textAllCaps="true"
-        android:textColor="@color/inventory_orange_ready_to_deliver"
-        android:textSize="12sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/inventory_id_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/inventory_ready_to_deliver_text">
-
-        <TextView
-            android:id="@+id/inventory_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textColor="#858585"
-            android:textSize="13sp"
-            tools:text="#4234820934" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/inventory_main_content_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inventory_id_layout">
-
-        <ImageView
-            android:id="@+id/inventory_image"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:paddingEnd="12dp"
-            android:scaleType="centerInside" />
-
-        <TextView
-            android:id="@+id/inventory_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_toEndOf="@+id/inventory_image"
-
-            android:lineSpacingExtra="2sp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="1 x Example of an item name, not limited to one-line." />
-
-        <LinearLayout
-            android:id="@+id/cl_quantity_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/inventory_title"
-            android:layout_alignStart="@+id/inventory_title"
-            android:layout_marginTop="2dp"
-            android:baselineAligned="true"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/inventory_editable_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLength="10"
-                android:textColor="@color/inventory_list_item_quantity_text"
-                android:textSize="13sp"
-                android:visibility="visible"
-                tools:text="000" />
-
-            <TextView
-                android:id="@+id/inventory_quantity_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:textColor="@color/inventory_list_item_quantity_text"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/inventory_editable_quantity"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="of 3 delivered" />
-
-            <TextView
-                android:id="@+id/inventory_price_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-
-                android:text="|"
-                android:textColor="@color/inventory_list_item_quantity_text"
-                android:textSize="13sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/inventory_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-
-                android:textColor="@color/inventory_list_item_quantity_text"
-                android:textSize="13sp"
-                tools:text="9.99" />
-        </LinearLayout>
-
-    </RelativeLayout>
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="inventory_image" />
 
     <TextView
-        android:id="@+id/inventory_subtitle"
+        android:id="@+id/inventory_title"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1 x Example of an item name, not limited to one-line." />
 
-        android:lineSpacingExtra="1sp"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inventory_main_content_container"
-        tools:text="Example of a package subtitle" />
+    <TextView
+        android:id="@+id/inventory_quantity_value"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_title"
+        tools:text="1 of 3 delivered" />
+
+    <TextView
+        android:id="@+id/inventory_external_id"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_quantity_value"
+        tools:text="External Id: GSDGK-453534-SK-53452345" />
+
+    <TextView
+        android:id="@+id/inventory_scan_string"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_external_id"
+        tools:text="Barcode: GSDGK-453534-SK-53452345" />
+
+    <TextView
+        android:id="@+id/inventory_assign_scan_string"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_scan_string"
+        tools:text="Assigned Barcode: GSDGK-453534-SK-53452345" />
+
+    <TextView
+        android:id="@+id/inventory_price"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_assign_scan_string"
+        tools:text="Price: 9.99" />
 
     <TextView
         android:id="@+id/inventory_comment"
+        style="@style/TextAppearance.MaterialComponents.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-
-        android:lineSpacingExtra="1sp"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inventory_subtitle"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_price"
         tools:text="Example of a comment attached to an inventory item. Comment is not limited in length." />
 
     <TextView
-        android:id="@+id/inventory_dimensions_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dimensions"
-        android:textColor="@color/black"
-        android:textSize="11sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inventory_comment"
-        tools:ignore="SmallSp" />
-
-    <TextView
         android:id="@+id/inventory_dimensions"
-        android:layout_width="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="20dp"
-
-        android:textColor="@color/black"
-        android:textSize="11sp"
-        app:layout_constraintBottom_toBottomOf="@+id/inventory_dimensions_icon"
-        app:layout_constraintStart_toEndOf="@id/inventory_dimensions_icon"
-        app:layout_constraintTop_toTopOf="@+id/inventory_dimensions_icon"
-        tools:ignore="SmallSp"
-        tools:text="24 x 24 x 100" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/inventory_dimensions_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="inventory_dimensions_icon,inventory_dimensions"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/inventory_weight_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="Weight"
-        android:textColor="@color/black"
-        android:textSize="11sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inventory_dimensions_icon"
-        tools:ignore="SmallSp" />
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_comment"
+        tools:text="Dimensions: 24 x 24 x 100" />
 
     <TextView
         android:id="@+id/inventory_weight"
-        android:layout_width="wrap_content"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:layout_marginEnd="20dp"
-        android:textColor="@color/black"
-        android:textSize="11sp"
-        app:layout_constraintBottom_toBottomOf="@+id/inventory_weight_icon"
-        app:layout_constraintStart_toEndOf="@id/inventory_weight_icon"
-        app:layout_constraintTop_toTopOf="@+id/inventory_weight_icon"
-        tools:ignore="SmallSp"
-        tools:text="242.53" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/inventory_weight_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="inventory_weight_icon,inventory_weight"
-        tools:visibility="visible" />
+        app:layout_constraintEnd_toStartOf="@+id/inventory_nested_items_amount"
+        app:layout_constraintStart_toEndOf="@+id/inventory_image_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/inventory_dimensions"
+        tools:text="Weight: 242.53" />
 
     <TextView
         android:id="@+id/inventory_nested_items_amount"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textColor="#5CAAFE"
-        android:textSize="18sp"
-        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

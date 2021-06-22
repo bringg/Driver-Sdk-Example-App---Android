@@ -28,7 +28,7 @@ class InventoryPricingLayout : ConstraintLayout {
     }
 
 
-    fun setData(inventoryList: List<Inventory>, inventoryListPresenter: InventoryListPresenter) {
-        list_inventory_items.adapter = InventoryPricingAdapter(inventoryList.sortedBy { it.id }, inventoryListPresenter)
+    fun setData(inventoryList: List<Inventory>) {
+        list_inventory_items.adapter = InventoryPricingAdapter(inventoryList.sortedBy { it.id })
     }
 }

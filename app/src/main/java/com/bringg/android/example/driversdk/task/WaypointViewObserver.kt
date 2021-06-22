@@ -7,13 +7,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
-import com.bringg.android.example.driversdk.task.ui.view.InventoryListPresenter
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.WaypointLeaveResult
-import driver_sdk.models.Inventory
 import driver_sdk.models.Waypoint
 
-class WaypointViewObserver(private val viewModel: BringgSdkViewModel, private val waypointId: Long, view: View, private val navController: NavController) : Observer<Waypoint?>, InventoryListPresenter {
+class WaypointViewObserver(private val viewModel: BringgSdkViewModel, view: View, private val navController: NavController) : Observer<Waypoint?> {
 
     private val TAG = "WaypointViewObserver"
     private val btnNextAction = view.findViewById<TextView>(R.id.btn_waypoint_progress)
@@ -43,27 +41,31 @@ class WaypointViewObserver(private val viewModel: BringgSdkViewModel, private va
                 }
             } else {
                 btnNextAction.isEnabled = true
-                if (waypoint.isCheckedIn) {
-                    btnNextAction.text = "Order Collected"
-                    btnNextAction.setOnClickListener {
-                        viewModel.leaveWayPoint(waypoint.id, object : ResultCallback<WaypointLeaveResult> {
-                            override fun onResult(result: WaypointLeaveResult) {
-                                Log.i(TAG, "leave waypoint result=$result")
-                                if (result.requiredActions.isNotEmpty()) {
-                                    navController.navigate(TaskFragmentDirections.actionTaskFragmentToDialogActions(task.getId()))
+                when {
+                    waypoint.isCheckedIn -> {
+                        btnNextAction.text = "Order Collected"
+                        btnNextAction.setOnClickListener {
+                            viewModel.leaveWayPoint(waypoint.id, object : ResultCallback<WaypointLeaveResult> {
+                                override fun onResult(result: WaypointLeaveResult) {
+                                    Log.i(TAG, "leave waypoint result=$result")
+                                    if (result.requiredActions.isNotEmpty()) {
+                                        navController.navigate(TaskFragmentDirections.actionTaskFragmentToDialogActions(task.getId()))
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
-                } else if (waypoint.isStarted) {
-                    btnNextAction.text = "Arrived"
-                    btnNextAction.setOnClickListener {
-                        viewModel.arriveToWayPoint(waypoint.id)
+                    waypoint.isStarted -> {
+                        btnNextAction.text = "Arrived"
+                        btnNextAction.setOnClickListener {
+                            viewModel.arriveToWayPoint(waypoint.id)
+                        }
                     }
-                } else {
-                    btnNextAction.text = "Start"
-                    btnNextAction.setOnClickListener {
-                        viewModel.startTask(task.getId())
+                    else -> {
+                        btnNextAction.text = "Start"
+                        btnNextAction.setOnClickListener {
+                            viewModel.startTask(task.getId())
+                        }
                     }
                 }
             }
@@ -76,9 +78,5 @@ class WaypointViewObserver(private val viewModel: BringgSdkViewModel, private va
                 viewModel.startShift()
             }
         }
-    }
-
-    override fun showInventoryList(inventory: Inventory) {
-        navController.navigate(TaskFragmentDirections.actionTaskFragmentToInventoryFragment(waypointId))
     }
 }

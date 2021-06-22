@@ -14,7 +14,7 @@ import driver_sdk.models.Inventory
 
 class WpInventoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
-    fun bind(inventory: Inventory, inventoryListPresenter: InventoryListPresenter) {
+    fun bind(inventory: Inventory) {
         val image: ImageView = itemView.findViewById(R.id.img_inventory_item)
         val name: TextView = itemView.findViewById(R.id.tv_name)
         val totalQuantity: TextView = itemView.findViewById(R.id.tv_total_quantity)
@@ -25,7 +25,6 @@ class WpInventoryViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
         val color = if (adapterPosition % 2 == 0) R.color.pricing_summary_table_cell_background_1 else R.color.pricing_summary_table_cell_background_2
         itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, color))
-        itemView.setOnClickListener { inventoryListPresenter.showInventoryList(inventory) }
 
         name.setTextColor(Color.GRAY)
         price.setTextColor(Color.GRAY)
