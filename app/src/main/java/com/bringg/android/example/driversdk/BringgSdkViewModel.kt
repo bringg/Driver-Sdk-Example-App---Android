@@ -19,6 +19,7 @@ import driver_sdk.driver.model.result.ExtrasUpdateResult
 import driver_sdk.driver.model.result.FindInventoryScanResult
 import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.driver.model.result.PhoneVerificationRequestResult
+import driver_sdk.driver.model.result.PickupActionResult
 import driver_sdk.driver.model.result.ResetPasswordRequestResult
 import driver_sdk.driver.model.result.ShiftEndResult
 import driver_sdk.driver.model.result.ShiftStartResult
@@ -287,6 +288,20 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     //region inventory actions
     fun incrementInventoryQuantity(inventory: Inventory): LiveData<InventoryIncrementQtyResult> {
         return driverSdk.inventory.incrementCurrentQuantity(inventory.id)
+    }
+    //endregion
+
+    //region pickupArea
+    fun startWaypoints(waypointIds: Collection<Long>): LiveData<PickupActionResult> {
+        return driverSdk.task.startPickup(waypointIds)
+    }
+
+    fun arriveWaypoints(waypointIds: Collection<Long>): LiveData<PickupActionResult> {
+        return driverSdk.task.arrivePickup(waypointIds)
+    }
+
+    fun completeWaypoints(waypointIds: Collection<Long>): LiveData<PickupActionResult> {
+        return driverSdk.task.finishPickup(waypointIds)
     }
     //endregion
 }

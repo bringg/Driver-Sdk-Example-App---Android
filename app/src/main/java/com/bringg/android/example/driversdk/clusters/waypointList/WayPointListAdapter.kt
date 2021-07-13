@@ -2,32 +2,22 @@ package com.bringg.android.example.driversdk.clusters.waypointList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
+import androidx.recyclerview.widget.ListAdapter
 import com.bringg.android.example.driversdk.R
-import java.util.LinkedList
+import driver_sdk.models.Waypoint
 
-class WayPointListAdapter(fragment: Fragment, private val waypoints: LiveData<List<driver_sdk.models.Waypoint>>) : RecyclerView.Adapter<WayPointListViewHolder>() {
-    private val wpList: MutableList<driver_sdk.models.Waypoint> = LinkedList()
+class WayPointListAdapter : ListAdapter<Waypoint, WayPointListViewHolder>(object : ItemCallback<Waypoint>() {
+    override fun areItemsTheSame(oldItem: Waypoint, newItem: Waypoint) = oldItem.id == newItem.id
 
-    init {
-        waypoints.observe(fragment, {
-            wpList.clear()
-            wpList.addAll(it.toList())
-            notifyDataSetChanged()
-        })
-    }
+    override fun areContentsTheSame(oldItem: Waypoint, newItem: Waypoint) = oldItem.equals(newItem)
+}) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WayPointListViewHolder {
         return WayPointListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.list_item_waypoint, parent, false))
     }
 
     override fun onBindViewHolder(holder: WayPointListViewHolder, position: Int) {
-        holder.bind(wpList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return wpList.size
+        holder.bind(getItem(position))
     }
 }
