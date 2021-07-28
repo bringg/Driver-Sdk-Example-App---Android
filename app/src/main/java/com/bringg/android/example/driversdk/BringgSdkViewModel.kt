@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import driver_sdk.account.LoginMerchant
-import driver_sdk.actions.FormData
 import driver_sdk.content.ResultCallback
 import driver_sdk.content.inventory.InventoryIncrementQtyResult
 import driver_sdk.controllers.scan.InventoryScanOptions
@@ -242,16 +241,11 @@ class BringgSdkViewModel(private val driverSdk: DriverSdk) : ViewModel() {
     }
 
     fun submitForm(
-        taskId: Long,
-        waypointId: Long = 0,
-        taskInventoryId: Long = 0,
-        formData: FormData
-    ) {
-        val actionData = DriverActionData.Builder()
-            .taskId(taskId)
-            .waypointId(waypointId)
-            .inventoryItemId(taskInventoryId)
-        driverSdk.actions.submitForm(
+        waypointId: Long,
+        formData: JSONObject
+    ): LiveData<NoteResult> {
+        val actionData = DriverActionData.Builder().waypointId(waypointId)
+        return driverSdk.actions.createForm(
             actionData.build(),
             formData
         )

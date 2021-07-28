@@ -12,17 +12,14 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.bringg.android.example.driversdk.BringgSdkViewModel
 import com.bringg.android.example.driversdk.R
-import driver_sdk.actions.FormData
-import driver_sdk.actions.FormSubmitterCallback
 import driver_sdk.content.ResultCallback
 import driver_sdk.driver.model.result.NoteResult
 import driver_sdk.logging.BringgLog
-import driver_sdk.models.configuration.TaskAction
-import driver_sdk.models.configuration.forms.Form
-import driver_sdk.models.configuration.forms.FormField
 import driver_sdk.models.enums.ImageType
+import java.util.UUID
 import kotlinx.android.synthetic.main.fragment_task_actions_dialog.*
 import kotlinx.android.synthetic.main.list_item_task_action.view.*
+import org.json.JSONArray
 import org.json.JSONObject
 
 class ActionsDialog : DialogFragment() {
@@ -42,7 +39,7 @@ class ActionsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rv_actions.adapter = TaskActionsAdapter(
-            listOf( SUBMIT_NOTE, SUBMIT_IMAGE, SUBMIT_FORM )
+            listOf(SUBMIT_NOTE, SUBMIT_IMAGE, SUBMIT_FORM)
         ) {
             clickTaskAction(it)
         }
@@ -63,15 +60,15 @@ class ActionsDialog : DialogFragment() {
 
     private fun submitNote(waypointId: Long) {
         viewModel.submitNote(args.taskId, waypointId, text = "my note",
-            callback = object : ResultCallback<NoteResult>{
-            override fun onResult(result: NoteResult) {
-                if (result.success) {
-                    Toast.makeText(context, "Note submitted successfully", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(context, result.error!!.name, Toast.LENGTH_LONG).show()
+            callback = object : ResultCallback<NoteResult> {
+                override fun onResult(result: NoteResult) {
+                    if (result.success) {
+                        Toast.makeText(context, "Note submitted successfully", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, result.error!!.name, Toast.LENGTH_LONG).show()
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun submitImage(waypointId: Long) {
@@ -79,47 +76,36 @@ class ActionsDialog : DialogFragment() {
             bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.RGB_565),
             imageDeletionUri = null,
             callback = object : ResultCallback<NoteResult> {
-            override fun onResult(result: NoteResult) {
-                if (result.success) {
-                    Toast.makeText(context, "Image submitted successfully", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(context, result.error!!.name, Toast.LENGTH_LONG).show()
+                override fun onResult(result: NoteResult) {
+                    if (result.success) {
+                        Toast.makeText(context, "Image submitted successfully", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, result.error!!.name, Toast.LENGTH_LONG).show()
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun submitForm(waypointId: Long) {
-        val jsonObject = toJson()
-        val form = Form(jsonObject, "form title", "submit")
-        val formData = FormData.Builder(form, object : FormSubmitterCallback{
-            override fun onError(error: FormSubmitterCallback.Error) {
-                BringgLog.info(TAG, "submitForm onError")
-                Toast.makeText(context, error.name, Toast.LENGTH_LONG).show()
-            }
-
-            override fun onFormSubmitted() {
-                BringgLog.info(TAG, "submitForm onFormSubmitted")
-                Toast.makeText(context, "Form submitted", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onMissingValueError(formField: FormField) {
-                BringgLog.info(TAG, "submitForm onMissingValueError $formField")
-                Toast.makeText(context, "Form missing field $formField", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onProgress(progress: Int, total: Int) {
-                BringgLog.info(TAG, "submitForm onProgress $progress total: $total")
-            }
-        }).build()
-        viewModel.submitForm(args.taskId, waypointId, formData = formData)
-    }
-
-    private fun toJson(): JSONObject {
-        return JSONObject().apply {
-            accumulate("title", "title")
-            accumulate("form field1", "form field1")
-            accumulate("form field2", "form field2")
+        val jsonArray = JSONArray()
+        for (i in 0 until 10) {
+            jsonArray.put(UUID.randomUUID().toString())
+        }
+        val jsonObject = JSONObject().apply {
+            put("string_value", UUID.randomUUID().toString())
+            put("boolean_value", true)
+            put("another_boolean", false)
+            put("int", Int.MAX_VALUE)
+            put("long", Long.MAX_VALUE)
+            put("float", Float.MAX_VALUE)
+            put("double", Double.MAX_VALUE)
+            put("array", listOf(1, 2, 3))
+            put("another_array", listOf("a", "b", "c"))
+            put("json_array", jsonArray)
+            put("some_other_value", args)
+        }
+        viewModel.submitForm(waypointId, jsonObject).observe(viewLifecycleOwner) {
+            Toast.makeText(context, "Submit json result=$it", Toast.LENGTH_LONG).show()
         }
     }
 
